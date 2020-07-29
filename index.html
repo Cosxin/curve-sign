@@ -9,9 +9,10 @@
     <meta name="description" content="">
     <meta name="keywords" content="">
     <title class="title">Curve Sign Dashboard</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
           integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -211,7 +212,8 @@
           </div>
           <div class="modal-body" id="feature-info"></div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            <button id="resetMarker" class="btn" data-dismiss="modal">RESET</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button> <!-- controller-->
           </div>
         </div>
       </div>
@@ -224,11 +226,14 @@
             crossorigin=""></script>
     <script src="assets/js/leaflet-providers.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.17.1/extensions/editable/bootstrap-table-editable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
     <script src="https://unpkg.com/esri-leaflet"></script>
     <script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/0.7.3/leaflet.polylineDecorator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/alasql/0.1/alasql.min.js"></script>
     <script src="assets/vendor/jQuery-QueryBuilder/query-builder.standalone.min.js"></script>
     <script src="assets/vendor/tableExport/tableExport.min.js"></script>
@@ -237,5 +242,10 @@
     <script src="assets/vendor/tableExport/libs/jsPDF/jspdf.min.js"></script>
     <script src="assets/vendor/tableExport/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
     <script src="assets/js/app.js"></script>
+    <script>
+      function myFunction() {
+        print();
+      }
+    </script>
   </body>
 </html>

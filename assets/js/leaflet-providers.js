@@ -1,6 +1,6 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		// AMD. Register as an anonymous module.
+		// AMD. Register as an anonymous module. 
 		define(['leaflet'], factory);
 	} else if (typeof modules === 'object' && module.exports) {
 		// define a Common JS module that relies on 'leaflet'

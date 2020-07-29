@@ -1,7 +1,7 @@
 var config = {
   geojson: "./data/geoJSON_result.geojson",
   title: "Curve Sign Dashboard",
-  layerName: "Signs",
+  layerNames: ["Signs"],
   hoverProperty: "designation",
   sortProperty: "curve_id",
   sortOrder: "desc"
@@ -48,8 +48,40 @@ var properties = [{
     }
   },
   {
+    value: "old_lat",
+    label: "original latitude",
+    table: {
+      visible: true,
+      sortable: true
+    }
+  },
+  {
+    value: "old_lon",
+    label: "original longitude",
+    table: {
+      visible: true,
+      sortable: true
+    }
+  },
+  {
+    value: "current_lat",
+    label: "current latitude",
+    table: {
+      visible: true,
+      sortable: true
+    }
+  },
+  {
+    value: "current_lng",
+    label: "current longitude",
+    table: {
+      visible: true,
+      sortable: true
+    }
+  },
+  {
     value: "inclination",
-    label: "curve c-slope",
+    label: "original curve c-slope",
     table: {
       visible: true,
       sortable: true
@@ -109,6 +141,22 @@ var properties = [{
     label: "Label",
     table: {
       visible: true,
+      sortable: true,
+      editable: true,
+    },
+    filter: {
+      type: "string",
+      input: "checkbox",
+      vertical: true,
+      multiple: true,
+      values: []
+    }
+  },
+  {
+    value: "moved",
+    label: "Changed",
+    table: {
+      visible: true,
       sortable: true
     },
     filter: {
@@ -130,6 +178,8 @@ var properties = [{
   filter: false
 }
 ];
+
+var reset = false;
 
 function drawCharts() {
   // Status
@@ -215,7 +265,9 @@ function drawCharts() {
 
 $(function() {
   $(".title").html(config.title);
-  $("#layer-name").html(config.layerName);
+  config.layerNames.forEach(function (layerName, i) {
+    $("#layer-name" + i).html(layerName);
+  });
 });
 
 function buildConfig() {
@@ -354,6 +406,8 @@ var highlightLayer = L.geoJson(null, {
 
 var featureLayer = L.geoJson(null, {
   filter: function(feature, layer) {
+    latitude = feature.geometry.coordinates[0];
+    longitude = feature.geometry.coordinates[1];
     return feature.geometry.coordinates[0] !== 0 && feature.geometry.coordinates[1] !== 0;
   },
   /*style: function (feature) {
@@ -371,10 +425,24 @@ var featureLayer = L.geoJson(null, {
       iconUrl: feature.properties["icon_url"],
       iconSize: [25, 30]
     });
-    return L.marker(latlng, {
+    var marker = L.marker(latlng, {
       icon:icon,
-      draggable: true
-    })
+      draggable: true,
+      opacity: 1,
+    });
+    var shadow_marker = new L.marker([feature.properties.old_lat, feature.properties.old_lon], {
+      icon:icon,
+      opacity: 0.2,
+    });
+    marker.on('drag', function(e){
+        shadow_marker.addTo(map);
+    });
+    marker.on('dragend', function (e) {
+      marker.feature.properties.moved = true;
+      shadow_marker.remove();
+      syncTable();
+    });
+    return marker;
     /*
     return L.circleMarker(latlng, {
       radius: 4,
@@ -458,7 +526,7 @@ var baseLayers = {
   "Aerial Imagery": Esri_WorldImagery
 };
 var overlayLayers = {
-  "<span id='layer-name'>GeoJSON Layer</span>": featureLayer
+  "<span id='layer-name0'>GeoJSON Layer</span>": featureLayer,
 };
 var layerControl = L.control.layers(baseLayers, overlayLayers, {
   collapsed: isCollapsed
@@ -517,10 +585,12 @@ function buildTable() {
     showColumns: true,
     showToggle: true,
     columns: table,
+    scrollX: true,
     onClickRow: function (row) {
       // do something!
     },
     onDblClickRow: function (row) {
+      map.panTo(new L.LatLng(row.current_lat, row.current_lng));
       // do something!
     }
   });
@@ -541,6 +611,8 @@ function syncTable() {
   tableFeatures = [];
   featureLayer.eachLayer(function (layer) {
     layer.feature.properties.leaflet_stamp = L.stamp(layer);
+    layer.feature.properties.current_lat = layer.getLatLng().lat;
+    layer.feature.properties.current_lng = layer.getLatLng().lng;   
     if (map.hasLayer(featureLayer)) {
       if (map.getBounds().contains(layer.getLatLng())) {
         //TODO: Not working if mix feature types in single geojson file
@@ -548,6 +620,7 @@ function syncTable() {
       }
     }
   });
+
   $("#table").bootstrapTable("load", JSON.parse(JSON.stringify(tableFeatures)));
   var featureCount = $("#table").bootstrapTable("getData").length;
   if (featureCount == 1) {
@@ -556,10 +629,16 @@ function syncTable() {
     $("#feature-count").html($("#table").bootstrapTable("getData").length + " visible features");
   }
 }
+function resetMarker(id) {
+  var layer = featureLayer.getLayer(id);
+  layer.setLatLng([layer.feature.properties.old_lat, layer.feature.properties.old_lon]);
+  syncTable();
+}
 
 function identifyFeature(id) {
   var featureProperties = featureLayer.getLayer(id).feature.properties;
   var content = "<table class='table table-striped table-bordered table-condensed'>";
+  $("#resetMarker").off("click").on("click", function () { resetMarker(id); });
   $.each(featureProperties, function (key, value) {
     if (!value) {
       value = "";
@@ -580,7 +659,11 @@ function identifyFeature(id) {
   $("#featureModal").modal("show");
 }
 
-//Execute Once, Add events after all elements are created
+
+/*
+  Register button callback functions
+*/
+
 $(function () {
   addClickEvents();
   addDropEvents();
@@ -725,6 +808,13 @@ function addClickEvents() {
   });
 }
 
+
+
+/*
+  Functions to support Drag-n-Drop GeoJSON
+ */
+
+
 function addDropEvents() {
   // set up the drag & drop events
   var mapContainer = document.getElementById('map-container');
@@ -792,3 +882,4 @@ function handleDrop(e) {
   // prevent drag event from bubbling further
   return false;
 }
+
