@@ -855,6 +855,7 @@ function handleDrop(e) {
   hidePanel(e);
 
   var files = e.dataTransfer.files;
+
   if (files.length) {
     // process file(s) being dropped
     // grab the file data from each file
