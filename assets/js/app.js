@@ -808,8 +808,6 @@ function addClickEvents() {
   });
 }
 
-
-
 /*
   Functions to support Drag-n-Drop GeoJSON
  */
