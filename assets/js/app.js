@@ -179,6 +179,60 @@ var properties = [{
 }
 ];
 
+var signInfo = {
+    signs : [
+        {
+          name : 'w1-1_L',
+          descr: 'Left Turn',
+        },
+        {
+          name : 'w1-1_R'
+        },
+        {
+          name : 'w1-2_L'
+        },
+        {
+          name : 'w1-2_R'
+        },
+        {
+          name : 'w1-3_L'
+        },
+        {
+          name : 'w1-3_R'
+        },
+        {
+          name : 'w1-4_L'
+        },
+        {
+          name : 'w1-4_R'
+        },
+        {
+          name : 'w1-1_L',
+          descr: 'Left Turn',
+        },
+        {
+          name : 'w1-1_R'
+        },
+        {
+          name : 'w1-2_L'
+        },
+        {
+          name : 'w1-2_R'
+        },
+        {
+          name : 'w1-3_L'
+        },
+        {
+          name : 'w1-3_R'
+        },
+        {
+          name : 'w1-4_L'
+        },
+        {
+          name : 'w1-4_R'
+        }]
+}
+
 var reset = false;
 
 function drawCharts() {
@@ -356,6 +410,7 @@ function buildConfig() {
 
   buildFilters();
   buildTable();
+  buildSidebar();
 }
 
 
@@ -660,6 +715,16 @@ function identifyFeature(id) {
 }
 
 
+function buildSidebar ()
+{
+  signInfo.signs.forEach(function (sign)
+      {
+        $("#sidebar-signs-container").append("<div class='card'> <img class='card-img-top'" +
+        "src='./assets/images/" + sign.name + ".png' height='50px' alt='Card image'> <div class='card-body'>" +
+        "<h5 class='card-title'>" + sign.name + "</h5></div></div>")
+      }
+      );
+}
 /*
   Register button callback functions
 */
