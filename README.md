@@ -32,7 +32,7 @@ Details will be discussed in individual meetings.
         * Do not actually remove the sign from the data source
         * Add a field in the table/geojson to indicate that this sign has marked for removal
         * Don't render signs that's been marked for removal, you can use css or change the logic in js to do this.
-    * Move the entire backend curve-sign-placement logic to the frontend (10 wks) [MUST DONE]
+    * Move the entire backend curve-sign-placement logic to the frontend (8 wks) [MUST DONE]
         * Review backend code to understand how sign locations are determined
         * Associate each sign with curve by curveID (partially completed)
         * Store curves as polyline with pc,pt,advSpeed,Radius attributes in GeoJSON
