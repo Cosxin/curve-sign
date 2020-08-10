@@ -13,6 +13,9 @@ Details will be discussed in individual meetings.
         * Remove unused codes
     * Use Npm and Webpack (client side only bundle) (1 wk)
         * Low priority, last task to do
+    * Implement Sign Confidence Interval and Allow user to upload a ground truth sign map (4 wks)
+        * The interval should be computed from the front end with a configurable interval
+        * Highlight missing sign and incorrectly placed sign
     * Add "History" feature (3 wks)
         * In GeoJSON, instead storing original and current locations, stores a list of locations
         * Every time a sign location has been changed and saved, push the new location to the list
