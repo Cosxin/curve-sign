@@ -13,14 +13,17 @@ Details will be discussed in individual meetings.
         * Remove unused codes
     * Use Npm and Webpack (client side only bundle) (1 wk)
         * Low priority, last task to do
-    * Implement Sign Confidence Interval and Allow user to upload a ground truth sign map (4 wks, **important**)
-        * The interval should be computed from the front end with a configurable interval
-        * Highlight missing sign and incorrectly placed sign
+    * Implement sign placement interval and allow user to upload a ground truth sign GeoJSON (4 wks, **important**)
+        * The interval should be computed from the current location
+        * A global value to configure the interval
+        * Highlight missing sign in one color
+        * Highlight incorrectly placed sign in another color
     * Add "History" feature (3 wks)
         * In GeoJSON, instead storing original and current locations, stores a list of locations
         * Every time a sign location has been changed and saved, push the new location to the list
         * Add a history table that allows user to choose among/delete past locations (In sign info pop-ups)
     * Implement 1) a global offset (1 wk, **important**) 2) a global scale (1 wks) or use MarkerCluster (2 wks)
+        * The global offset should be saved in GeoJSON as a global property
         * Use the global offset to move all signs along the lateral direction (vector given for each sign in GeoJSON)
         * Use the global scale to adjust the size of the icons, alternatively use markercluster
         * Use e.g. slider to adjust the offset
