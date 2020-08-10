@@ -1,6 +1,6 @@
-# geojson-dashboard
+# Curve-sign-dashboard
 
-A configurable framework for building a geographic "data dashboard" from a GeoJSON file.
+Single page, serverless curve sign visualization and editing tool.
 
 ## Todo
 
