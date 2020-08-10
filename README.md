@@ -13,14 +13,14 @@ Details will be discussed in individual meetings.
         * Remove unused codes
     * Use Npm and Webpack (client side only bundle) (1 wk)
         * Low priority, last task to do
-    * Implement Sign Confidence Interval and Allow user to upload a ground truth sign map (4 wks)
+    * Implement Sign Confidence Interval and Allow user to upload a ground truth sign map (4 wks, **important**)
         * The interval should be computed from the front end with a configurable interval
         * Highlight missing sign and incorrectly placed sign
     * Add "History" feature (3 wks)
         * In GeoJSON, instead storing original and current locations, stores a list of locations
         * Every time a sign location has been changed and saved, push the new location to the list
         * Add a history table that allows user to choose among/delete past locations (In sign info pop-ups)
-    * Implement 1) a global offset (1 wk) 2) a global scale (1 wks) or use MarkerCluster (2 wks)
+    * Implement 1) a global offset (1 wk, **important**) 2) a global scale (1 wks) or use MarkerCluster (2 wks)
         * Use the global offset to move all signs along the lateral direction (vector given for each sign in GeoJSON)
         * Use the global scale to adjust the size of the icons, alternatively use markercluster
         * Use e.g. slider to adjust the offset
@@ -35,7 +35,7 @@ Details will be discussed in individual meetings.
         * Do not actually remove the sign from the data source
         * Add a field in the table/geojson to indicate that this sign has marked for removal
         * Don't render signs that's been marked for removal, you can use css or change the logic in js to do this.
-    * Move the entire backend curve-sign-placement logic to the frontend (8 wks) [MUST DONE]
+    * Move the entire backend curve-sign-placement logic to the frontend (8 wks, **important**)
         * Review backend code to understand how sign locations are determined
         * Associate each sign with curve by curveID (partially completed)
         * Store curves as polyline with pc,pt,advSpeed,Radius attributes in GeoJSON
@@ -47,8 +47,8 @@ Details will be discussed in individual meetings.
         * See static report
     * Bug fix to the current dashboard
         * After editing the table, the new values should be saved in the memory/json object (1 wk)
-    * Validation of the work done using a simple route (Mandatory, cnt as 1 wk)
-    * Documentation Meeting and two Demos (Mandatory, cnt as 2 wks)
+    * Validation of the work done using a simple route (Mandatory, cnt as 1 wk, **important**)
+    * Documentation Meeting and two Demos (Mandatory, cnt as 2 wks, **important**)
 
 
 ## Features
