@@ -50,7 +50,7 @@ Details will be discussed in individual meetings.
         * See static report
     * Bug fix to the current dashboard
         * After editing the table, the new values should be saved in the memory/json object (1 wk)
-    * Validation of the work done using a simple route (Mandatory, cnt as 1 wk, **important**)
+    * Validation of the work done using a simple route (Mandatory, cnt as 3 wk, **important**)
     * Documentation Meeting and two Demos (Mandatory, cnt as 2 wks, **important**)
 
 
