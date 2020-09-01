@@ -19,154 +19,154 @@ var properties = [{
   },
   info: false
 },
-  {
-    value: "sign_elevation",
-    label: "sign elevation",
-    table: {
-      visible: false,
-      sortable: true
-    },
-    filter: {
-      type: "integer"
-    },
-    info: false
+{
+  value: "sign_elevation",
+  label: "sign elevation",
+  table: {
+    visible: false,
+    sortable: true
   },
-  {
-    value: "designation",
-    label: "MUTCD code",
-    table: {
-      visible: true,
-      sortable: true
-    },
-    filter: {
-      type: "string",
-      input: "checkbox",
-      vertical: true,
-      multiple: true,
-      operators: ["in", "not_in", "equal", "not_equal"],
-      values: []
-    }
+  filter: {
+    type: "integer"
   },
-  {
-    value: "old_lat",
-    label: "original latitude",
-    table: {
-      visible: true,
-      sortable: true
-    }
+  info: false
+},
+{
+  value: "designation",
+  label: "MUTCD code",
+  table: {
+    visible: true,
+    sortable: true
   },
-  {
-    value: "old_lon",
-    label: "original longitude",
-    table: {
-      visible: true,
-      sortable: true
-    }
+  filter: {
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    operators: ["in", "not_in", "equal", "not_equal"],
+    values: []
+  }
+},
+{
+  value: "old_lat",
+  label: "original latitude",
+  table: {
+    visible: true,
+    sortable: true
+  }
+},
+{
+  value: "old_lon",
+  label: "original longitude",
+  table: {
+    visible: true,
+    sortable: true
+  }
+},
+{
+  value: "current_lat",
+  label: "current latitude",
+  table: {
+    visible: true,
+    sortable: true
+  }
+},
+{
+  value: "current_lng",
+  label: "current longitude",
+  table: {
+    visible: true,
+    sortable: true
+  }
+},
+{
+  value: "inclination",
+  label: "original curve c-slope",
+  table: {
+    visible: true,
+    sortable: true
   },
-  {
-    value: "current_lat",
-    label: "current latitude",
-    table: {
-      visible: true,
-      sortable: true
-    }
+  filter: {
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    values: []
+  }
+},
+{
+  value: "mile_post",
+  label: "MP",
+  table: {
+    visible: true,
+    sortable: true
   },
-  {
-    value: "current_lng",
-    label: "current longitude",
-    table: {
-      visible: true,
-      sortable: true
-    }
+  filter: {
+    type: "double"
   },
-  {
-    value: "inclination",
-    label: "original curve c-slope",
-    table: {
-      visible: true,
-      sortable: true
-    },
-    filter: {
-      type: "string",
-      input: "checkbox",
-      vertical: true,
-      multiple: true,
-      values: []
-    }
+  info: false
+},
+{
+  value: "pcmp",
+  label: "curve pcmp",
+  table: {
+    visible: true,
+    sortable: true
   },
-  {
-    value: "mile_post",
-    label: "MP",
-    table: {
-      visible: true,
-      sortable: true
-    },
-    filter: {
-      type: "double"
-    },
-    info: false
+  filter: {
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    values: []
+  }
+},
+{
+  value: "ptmp",
+  label: "curve ptmp",
+  table: {
+    visible: true,
+    sortable: true
   },
-  {
-    value: "pcmp",
-    label: "curve pcmp",
-    table: {
-      visible: true,
-      sortable: true
-    },
-    filter: {
-      type: "string",
-      input: "checkbox",
-      vertical: true,
-      multiple: true,
-      values: []
-    }
+  filter: {
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    values: []
+  }
+},
+{
+  value: "custom_label",
+  label: "Label",
+  table: {
+    visible: true,
+    sortable: true,
+    editable: true,
   },
-  {
-    value: "ptmp",
-    label: "curve ptmp",
-    table: {
-      visible: true,
-      sortable: true
-    },
-    filter: {
-      type: "string",
-      input: "checkbox",
-      vertical: true,
-      multiple: true,
-      values: []
-    }
+  filter: {
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    values: []
+  }
+},
+{
+  value: "moved",
+  label: "Changed",
+  table: {
+    visible: true,
+    sortable: true
   },
-  {
-    value: "custom_label",
-    label: "Label",
-    table: {
-      visible: true,
-      sortable: true,
-      editable: true,
-    },
-    filter: {
-      type: "string",
-      input: "checkbox",
-      vertical: true,
-      multiple: true,
-      values: []
-    }
-  },
-  {
-    value: "moved",
-    label: "Changed",
-    table: {
-      visible: true,
-      sortable: true
-    },
-    filter: {
-      type: "string",
-      input: "checkbox",
-      vertical: true,
-      multiple: true,
-      values: []
-    }
-  },
+  filter: {
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    values: []
+  }
+},
 {
   value: "icon_url",
   label: "Icons",
@@ -180,94 +180,94 @@ var properties = [{
 ];
 
 var signInfo = {
-    signs : [
-        {
-          name : 'w1-1_L',
-          descr: 'Left Turn',
-        },
-        {
-          name : 'w1-1_R'
-        },
-        {
-          name : 'w1-2_L'
-        },
-        {
-          name : 'w1-2_R'
-        },
-        {
-          name : 'w1-3_L'
-        },
-        {
-          name : 'w1-3_R'
-        },
-        {
-          name : 'w1-4_L'
-        },
-        {
-          name : 'w1-4_R'
-        },
-        {
-          name : 'w1-1_L',
-          descr: 'Left Turn',
-        },
-        {
-          name : 'w1-1_R'
-        },
-        {
-          name : 'w1-2_L'
-        },
-        {
-          name : 'w1-2_R'
-        },
-        {
-          name : 'w1-3_L'
-        },
-        {
-          name : 'w1-3_R'
-        },
-        {
-          name : 'w1-4_L'
-        },
-        {
-          name : 'w1-4_R'
-        }]
+  signs: [
+    {
+      name: 'w1-1_L',
+      descr: 'Left Turn',
+    },
+    {
+      name: 'w1-1_R'
+    },
+    {
+      name: 'w1-2_L'
+    },
+    {
+      name: 'w1-2_R'
+    },
+    {
+      name: 'w1-3_L'
+    },
+    {
+      name: 'w1-3_R'
+    },
+    {
+      name: 'w1-4_L'
+    },
+    {
+      name: 'w1-4_R'
+    },
+    {
+      name: 'w1-1_L',
+      descr: 'Left Turn',
+    },
+    {
+      name: 'w1-1_R'
+    },
+    {
+      name: 'w1-2_L'
+    },
+    {
+      name: 'w1-2_R'
+    },
+    {
+      name: 'w1-3_L'
+    },
+    {
+      name: 'w1-3_R'
+    },
+    {
+      name: 'w1-4_L'
+    },
+    {
+      name: 'w1-4_R'
+    }]
 }
 
 var reset = false;
 
 function drawCharts() {
   // Status
-  $(function() {
+  $(function () {
     var result = alasql("SELECT status AS label, COUNT(*) AS total FROM ? GROUP BY status", [features]);
-    var columns = $.map(result, function(status) {
+    var columns = $.map(result, function (status) {
       return [[status.label, status.total]];
     });
     var chart = c3.generate({
-        bindto: "#status-chart",
-        data: {
-          type: "pie",
-          columns: columns
-        }
+      bindto: "#status-chart",
+      data: {
+        type: "pie",
+        columns: columns
+      }
     });
   });
 
   // Zones
-  $(function() {
+  $(function () {
     var result = alasql("SELECT congress_park_inventory_zone AS label, COUNT(*) AS total FROM ? GROUP BY congress_park_inventory_zone", [features]);
-    var columns = $.map(result, function(zone) {
+    var columns = $.map(result, function (zone) {
       return [[zone.label, zone.total]];
     });
     var chart = c3.generate({
-        bindto: "#zone-chart",
-        data: {
-          type: "pie",
-          columns: columns
-        }
+      bindto: "#zone-chart",
+      data: {
+        type: "pie",
+        columns: columns
+      }
     });
   });
 
   // Size
-  $(function() {
+  $(function () {
     var sizes = [];
     var regeneration = alasql("SELECT 'Regeneration (< 3\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) < 3", [features]);
     var sapling = alasql("SELECT 'Sapling/poles (1-9\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 1 AND 9", [features]);
@@ -276,48 +276,48 @@ function drawCharts() {
     var large = alasql("SELECT 'Large trees (20-29\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 20 AND 29", [features]);
     var giant = alasql("SELECT 'Giant trees (> 29\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) > 29", [features]);
     sizes.push(regeneration, sapling, small, medium, large, giant);
-    var columns = $.map(sizes, function(size) {
+    var columns = $.map(sizes, function (size) {
       return [[size[0].category, size[0].total]];
     });
     var chart = c3.generate({
-        bindto: "#size-chart",
-        data: {
-          type: "pie",
-          columns: columns
-        }
+      bindto: "#size-chart",
+      data: {
+        type: "pie",
+        columns: columns
+      }
     });
   });
 
   // Species
-  $(function() {
+  $(function () {
     var result = alasql("SELECT species_sim AS label, COUNT(*) AS total FROM ? GROUP BY species_sim ORDER BY label ASC", [features]);
     var chart = c3.generate({
-        bindto: "#species-chart",
-        size: {
-          height: 2000
+      bindto: "#species-chart",
+      size: {
+        height: 2000
+      },
+      data: {
+        json: result,
+        keys: {
+          x: "label",
+          value: ["total"]
         },
-        data: {
-          json: result,
-          keys: {
-            x: "label",
-            value: ["total"]
-          },
-          type: "bar"
-        },
-        axis: {
-          rotated: true,
-          x: {
-            type: "category"
-          }
-        },
-        legend: {
-          show: false
+        type: "bar"
+      },
+      axis: {
+        rotated: true,
+        x: {
+          type: "category"
         }
+      },
+      legend: {
+        show: false
+      }
     });
   });
 }
 
-$(function() {
+$(function () {
   $(".title").html(config.title);
   config.layerNames.forEach(function (layerName, i) {
     $("#layer-name" + i).html(layerName);
@@ -334,13 +334,13 @@ function buildConfig() {
     width: "75px",
     cardVisible: false,
     switchable: false,
-    formatter: function(value, row, index) {
+    formatter: function (value, row, index) {
       return [
         '<a class="zoom" href="javascript:void(0)" title="Zoom" style="margin-right: 10px;">',
-          '<i class="fa fa-search-plus"></i>',
+        '<i class="fa fa-search-plus"></i>',
         '</a>',
         '<a class="identify" href="javascript:void(0)" title="Identify">',
-          '<i class="fa fa-info-circle"></i>',
+        '<i class="fa fa-info-circle"></i>',
         '</a>'
       ].join("");
     },
@@ -360,15 +360,15 @@ function buildConfig() {
 
 
 
-  $.each(properties, function(index, value) {
+  $.each(properties, function (index, value) {
     // Filter config
     if (value.filter) {
       var id;
       if (value.filter.type == "integer") {
-        id = "cast(properties->"+ value.value +" as int)";
+        id = "cast(properties->" + value.value + " as int)";
       }
       else if (value.filter.type == "double") {
-        id = "cast(properties->"+ value.value +" as double)";
+        id = "cast(properties->" + value.value + " as double)";
       }
       else {
         id = "properties->" + value.value;
@@ -377,13 +377,13 @@ function buildConfig() {
         id: id,
         label: value.label
       });
-      $.each(value.filter, function(key, val) {
+      $.each(value.filter, function (key, val) {
         if (filters[index]) {
           // If values array is empty, fetch all distinct values
           if (key == "values" && val.length === 0) {
-            alasql("SELECT DISTINCT(properties->"+value.value+") AS field FROM ? ORDER BY field ASC", [geojson.features], function(results){
+            alasql("SELECT DISTINCT(properties->" + value.value + ") AS field FROM ? ORDER BY field ASC", [geojson.features], function (results) {
               distinctValues = [];
-              $.each(results, function(index, value) {
+              $.each(results, function (index, value) {
                 distinctValues.push(value.field);
               });
             });
@@ -400,9 +400,9 @@ function buildConfig() {
         field: value.value,
         title: value.label
       });
-      $.each(value.table, function(key, val) {
-        if (table[index+1]) {
-          table[index+1][key] = val;
+      $.each(value.table, function (key, val) {
+        if (table[index + 1]) {
+          table[index + 1][key] = val;
         }
       });
     }
@@ -460,7 +460,7 @@ var highlightLayer = L.geoJson(null, {
 });
 
 var featureLayer = L.geoJson(null, {
-  filter: function(feature, layer) {
+  filter: function (feature, layer) {
     latitude = feature.geometry.coordinates[0];
     longitude = feature.geometry.coordinates[1];
     return feature.geometry.coordinates[0] !== 0 && feature.geometry.coordinates[1] !== 0;
@@ -481,16 +481,16 @@ var featureLayer = L.geoJson(null, {
       iconSize: [25, 30]
     });
     var marker = L.marker(latlng, {
-      icon:icon,
+      icon: icon,
       draggable: true,
       opacity: 1,
     });
     var shadow_marker = new L.marker([feature.properties.old_lat, feature.properties.old_lon], {
-      icon:icon,
+      icon: icon,
       opacity: 0.2,
     });
-    marker.on('drag', function(e){
-        shadow_marker.addTo(map);
+    marker.on('drag', function (e) {
+      shadow_marker.addTo(map);
     });
     marker.on('dragend', function (e) {
       marker.feature.properties.moved = true;
@@ -651,9 +651,9 @@ function buildTable() {
   });
 
   map.fitBounds(featureLayer.getBounds(),
-      {
-        animate: false,
-      });
+    {
+      animate: false,
+    });
 
   $(window).resize(function () {
     $("#table").bootstrapTable("resetView", {
@@ -667,7 +667,7 @@ function syncTable() {
   featureLayer.eachLayer(function (layer) {
     layer.feature.properties.leaflet_stamp = L.stamp(layer);
     layer.feature.properties.current_lat = layer.getLatLng().lat;
-    layer.feature.properties.current_lng = layer.getLatLng().lng;   
+    layer.feature.properties.current_lng = layer.getLatLng().lng;
     if (map.hasLayer(featureLayer)) {
       if (map.getBounds().contains(layer.getLatLng())) {
         //TODO: Not working if mix feature types in single geojson file
@@ -689,11 +689,15 @@ function resetMarker(id) {
   layer.setLatLng([layer.feature.properties.old_lat, layer.feature.properties.old_lon]);
   syncTable();
 }
-
+function deleteMarker(id) {
+  featureLayer.removeLayer(id);
+  syncTable();
+}
 function identifyFeature(id) {
   var featureProperties = featureLayer.getLayer(id).feature.properties;
   var content = "<table class='table table-striped table-bordered table-condensed'>";
   $("#resetMarker").off("click").on("click", function () { resetMarker(id); });
+  $("#deleteMarker").off("click").on("click", function () { deleteMarker(id); });
   $.each(featureProperties, function (key, value) {
     if (!value) {
       value = "";
@@ -715,15 +719,13 @@ function identifyFeature(id) {
 }
 
 
-function buildSidebar ()
-{
-  signInfo.signs.forEach(function (sign)
-      {
-        $("#sidebar-signs-container").append("<div class='card'> <img class='card-img-top'" +
-        "src='./assets/images/" + sign.name + ".png' height='50px' alt='Card image'> <div class='card-body'>" +
-        "<h5 class='card-title'>" + sign.name + "</h5></div></div>")
-      }
-      );
+function buildSidebar() {
+  signInfo.signs.forEach(function (sign) {
+    $("#sidebar-signs-container").append("<div class='card'> <img class='card-img-top'" +
+      "src='./assets/images/" + sign.name + ".png' height='50px' alt='Card image'> <div class='card-body'>" +
+      "<h5 class='card-title'>" + sign.name + "</h5></div></div>")
+  }
+  );
 }
 /*
   Register button callback functions
@@ -862,7 +864,7 @@ function addClickEvents() {
   });
 
   $("#download-geojson-btn").click(function () {
-    var file = new File([JSON.stringify(featureLayer.toGeoJSON())], "download.geojson", {type: "Content-type: application/json;"});
+    var file = new File([JSON.stringify(featureLayer.toGeoJSON())], "download.geojson", { type: "Content-type: application/json;" });
     saveAs(file);
     $(".navbar-collapse.in").collapse("hide");
     return false;
@@ -926,10 +928,10 @@ function handleDrop(e) {
     // grab the file data from each file
     for (var i = 0, file; file = files[i]; i++) {
       var reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         loadGeoJsonString(e.target.result);
       };
-      reader.onerror = function(e) {
+      reader.onerror = function (e) {
         console.error('reading failed');
       };
       reader.readAsText(file);
