@@ -12,7 +12,7 @@ var properties = [{
   label: "curve_id",
   table: {
     visible: true,
-    sortable: true
+    sortable: true,
   },
   filter: {
     type: "integer"
@@ -235,85 +235,40 @@ var signInfo = {
 
 var reset = false;
 
-function drawCharts() {
-  // Status
+function generateTotals() {
   $(function () {
-    var result = alasql("SELECT status AS label, COUNT(*) AS total FROM ? GROUP BY status", [features]);
-    var columns = $.map(result, function (status) {
-      return [[status.label, status.total]];
+    var result = alasql("SELECT *, COUNT(*) AS Quantity FROM ? GROUP BY curve_id, sign_code", [features]);
+    var data = $.map(result, function (status) {
+      return {
+        id: status.curve_id,
+        code: status.sign_code,
+        count: status.Quantity
+      };
     });
-    var chart = c3.generate({
-      bindto: "#status-chart",
-      data: {
-        type: "pie",
-        columns: columns
-      }
-    });
-  });
-
-  // Zones
-  $(function () {
-    var result = alasql("SELECT congress_park_inventory_zone AS label, COUNT(*) AS total FROM ? GROUP BY congress_park_inventory_zone", [features]);
-    var columns = $.map(result, function (zone) {
-      return [[zone.label, zone.total]];
-    });
-    var chart = c3.generate({
-      bindto: "#zone-chart",
-      data: {
-        type: "pie",
-        columns: columns
-      }
-    });
-  });
-
-  // Size
-  $(function () {
-    var sizes = [];
-    var regeneration = alasql("SELECT 'Regeneration (< 3\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) < 3", [features]);
-    var sapling = alasql("SELECT 'Sapling/poles (1-9\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 1 AND 9", [features]);
-    var small = alasql("SELECT 'Small trees (10-14\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 10 AND 14", [features]);
-    var medium = alasql("SELECT 'Medium trees (15-19\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 15 AND 19", [features]);
-    var large = alasql("SELECT 'Large trees (20-29\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 20 AND 29", [features]);
-    var giant = alasql("SELECT 'Giant trees (> 29\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) > 29", [features]);
-    sizes.push(regeneration, sapling, small, medium, large, giant);
-    var columns = $.map(sizes, function (size) {
-      return [[size[0].category, size[0].total]];
-    });
-    var chart = c3.generate({
-      bindto: "#size-chart",
-      data: {
-        type: "pie",
-        columns: columns
-      }
-    });
-  });
-
-  // Species
-  $(function () {
-    var result = alasql("SELECT species_sim AS label, COUNT(*) AS total FROM ? GROUP BY species_sim ORDER BY label ASC", [features]);
-    var chart = c3.generate({
-      bindto: "#species-chart",
-      size: {
-        height: 2000
-      },
-      data: {
-        json: result,
-        keys: {
-          x: "label",
-          value: ["total"]
-        },
-        type: "bar"
-      },
-      axis: {
-        rotated: true,
-        x: {
-          type: "category"
-        }
-      },
-      legend: {
-        show: false
-      }
-    });
+    console.log(data);
+    $("#totalTable").bootstrapTable({
+      columns: [{
+        field: 'id',
+        title: 'Curve ID'
+      }, {
+        field: 'code',
+        title: 'Sign Code'
+      }, {
+        field: 'count',
+        title: 'Quantity'
+      }],
+      data: data,
+      groupBy: true,
+      groupByField: 'id',
+      showColumns: true,
+    })
+    // var chart = c3.generate({
+    //   bindto: "#table-chart",
+    //   data: {
+    //     columns: data
+    //   },
+    //   type: 'bar',
+    // });
   });
 }
 
@@ -795,8 +750,8 @@ function addClickEvents() {
     return false;
   });
 
-  $("#chart-btn").click(function () {
-    $("#chartModal").modal("show");
+  $("#total-btn").click(function () {
+    $("#totalModal").modal("show");
     $(".navbar-collapse.in").collapse("hide");
     return false;
   });
@@ -841,24 +796,28 @@ function addClickEvents() {
   });
 
   $("#download-pdf-btn").click(function () {
-    $("#table").tableExport({
-      type: "pdf",
-      ignoreColumn: [0],
-      fileName: "data",
-      jspdf: {
-        format: "bestfit",
-        margins: {
-          left: 20,
-          right: 10,
-          top: 20,
-          bottom: 20
-        },
-        autotable: {
-          extendWidth: false,
-          overflow: "linebreak"
-        }
-      }
-    });
+    var doc = new jsPDF();
+    console.log("#totalTable");
+    // doc.autoTable({ html: "#totalTable" });
+    // return doc;
+    // $("#table").tableExport({
+    //   type: "pdf",
+    //   ignoreColumn: [0],
+    //   fileName: "data",
+    //   jspdf: {
+    //     format: "bestfit",
+    //     margins: {
+    //       left: 20,
+    //       right: 10,
+    //       top: 20,
+    //       bottom: 20
+    //     },
+    //     autotable: {
+    //       extendWidth: false,
+    //       overflow: "linebreak"
+    //     }
+    //   }
+    // });
     $(".navbar-collapse.in").collapse("hide");
     return false;
   });
@@ -870,8 +829,8 @@ function addClickEvents() {
     return false;
   });
 
-  $("#chartModal").on("shown.bs.modal", function (e) {
-    drawCharts();
+  $("#totalModal").on("shown.bs.modal", function (e) {
+    generateTotals();
   });
 }
 
