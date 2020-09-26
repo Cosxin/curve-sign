@@ -236,6 +236,7 @@ var signInfo = {
 var reset = false;
 
 function generateTotals() {
+  //by curve
   $(function () {
     var result = alasql("SELECT *, COUNT(*) AS Quantity FROM ? GROUP BY curve_id, sign_code", [features]);
     var data = $.map(result, function (status) {
@@ -246,7 +247,7 @@ function generateTotals() {
       };
     });
     console.log(data);
-    $("#totalTable").bootstrapTable({
+    $("#curveTotalTable").bootstrapTable({
       columns: [{
         field: 'id',
         title: 'Curve ID'
@@ -262,13 +263,33 @@ function generateTotals() {
       groupByField: 'id',
       showColumns: true,
     })
-    // var chart = c3.generate({
-    //   bindto: "#table-chart",
-    //   data: {
-    //     columns: data
-    //   },
-    //   type: 'bar',
-    // });
+  });
+
+  //by sign
+  $(function () {
+    var result = alasql("SELECT sign_code as Sign, COUNT(*) AS Quantity FROM ? GROUP BY sign_code", [features]);
+    console.log(result);
+    var data = $.map(result, function (sign) {
+      return {
+        Sign: sign.Sign,
+        Image: "<img class='card-img-top'" + "src='./assets/images/" + sign.Sign + ".png' height= '50px' alt='Card image'>",
+        Quantity: sign.Quantity,
+      }
+    });
+    $("#signTotalTable").bootstrapTable({
+      columns: [{
+        field: 'Sign',
+        title: "Sign",
+      }, {
+        field: 'Image',
+        title: 'Image',
+      }, {
+        field: 'Quantity',
+        title: 'Quantity',
+      }],
+      data: data,
+      showColumns: true,
+    })
   });
 }
 
@@ -797,7 +818,8 @@ function addClickEvents() {
 
   $("#download-pdf-btn").click(function () {
     var doc = new jsPDF();
-    console.log("#totalTable");
+    var data = ('#curveTotalTable').bootstrapTable
+    console.log("#curveTotalTable");
     // doc.autoTable({ html: "#totalTable" });
     // return doc;
     // $("#table").tableExport({
