@@ -520,7 +520,8 @@ $.getJSON(config.geojson, function (data) {
 });
 
 var map = L.map("map", {
-  layers: [OpenStreetMap_Mapnik, featureLayer, highlightLayer]
+  layers: [OpenStreetMap_Mapnik, featureLayer, highlightLayer],
+  preferCanvas: true
 }).fitWorld();
 
 // ESRI geocoder
@@ -817,9 +818,25 @@ function addClickEvents() {
   });
 
   $("#download-pdf-btn").click(function () {
-    var doc = new jsPDF();
-    var data = ('#curveTotalTable').bootstrapTable
-    console.log("#curveTotalTable");
+    //var doc = new jsPDF();
+    //var data = ('#curveTotalTable').bootstrapTable
+    var results = alasql('Select *, MAX(current_lng) as maxlon, MIN(current_lng) as minlon, MAX(current_lat) as maxlat, ' +
+        'MIN(current_lat) as minlat from ? Group by curve_id', [features]);
+    results.forEach(function(curve){
+      map.fitBounds(L.latLngBounds(L.latLng(curve.maxlat,curve.maxlon), L.latLng(curve.minlat, curve.minlon)));
+      leafletImage(map, function(err, canvas) {
+        // now you have canvas
+        // example thing to do with that canvas:
+        var img = document.createElement('img');
+        var dimensions = map.getSize();
+        img.width = dimensions.x;
+        img.height = dimensions.y;
+        img.src = canvas.toDataURL();
+        document.getElementById('images').innerHTML = '';
+        document.getElementById('images').appendChild(img);
+      });
+
+    });
     // doc.autoTable({ html: "#totalTable" });
     // return doc;
     // $("#table").tableExport({
@@ -840,8 +857,8 @@ function addClickEvents() {
     //     }
     //   }
     // });
-    $(".navbar-collapse.in").collapse("hide");
-    return false;
+    //$(".navbar-collapse.in").collapse("hide");
+    //return false;
   });
 
   $("#download-geojson-btn").click(function () {
