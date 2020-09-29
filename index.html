@@ -60,8 +60,6 @@
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li><a id="about-btn" href="#" data-toggle="collapse" data-target=".navbar-collapse.in"><i
-                class="fa fa-question-circle fa-white"></i> About</a></li>
           <li><a id="total-btn" href="#" data-toggle="collapse" data-target=".navbar-collapse.in"><i
                 class="fa fa-bar-chart fa-white"></i> Totals</a></li>
           <li><a id="extent-btn" href="#" data-toggle="collapse" data-target=".navbar-collapse.in"><i
@@ -118,70 +116,16 @@
   </div>
 
   <!-- All Modals-->
-  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+  <div class="modal fade" id="exportingModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Welcome to the GeoJSON Data Dashboard!</h4>
+          <h4 class="modal-title">Generating PDF Reports</h4>
         </div>
         <div class="modal-body">
-          <ul class="nav nav-tabs" id="aboutTabs">
-            <li class="active"><a href="#about-tab" data-toggle="tab"><i class="fa fa-question-circle"></i> About the
-                project</a></li>
-            <li><a href="#configuration-tab" data-toggle="tab"><i class="fa fa-gear"></i> Configuration</a></li>
-          </ul>
-          <div class="tab-content" id="aboutTabsContent">
-            <div class="tab-pane fade active in" id="about-tab">
-              <p>A configurable framework for building a geographic "data dashboard" from a GeoJSON file. Open source,
-                MIT licensed, and available on <a href="https://github.com/fulcrumapp/geojson-dashboard"
-                  target="_blank">GitHub</a>.</p>
-              <div class="panel panel-primary">
-                <div class="panel-heading">Features</div>
-                <ul class="list-group">
-                  <li class="list-group-item">Flexible template built on active open source components</li>
-                  <li class="list-group-item">Entirely client-side, can be hosted for free on <a
-                      href="https://pages.github.com/" target="_blank">GitHub Pages</a></li>
-                  <li class="list-group-item">Built on the incredibly popular <a href="http://getbootstrap.com/"
-                      target="_blank">Bootstrap</a> UI framework</li>
-                  <li class="list-group-item">Maps via <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, the
-                    leading open source JavaScript mapping library</li>
-                  <li class="list-group-item">Interactive data table with sorting, searching, column toggling, and data
-                    export via the <a href="http://bootstrap-table.wenzhixin.net.cn/" target="_blank">Bootstrap
-                      Table</a> plugin</li>
-                  <li class="list-group-item">Advanced, interactive GeoJSON data querying that integrates <a
-                      href="http://mistic100.github.io/jQuery-QueryBuilder/index.html" target="_blank">jQuery
-                      QueryBuilder</a> with <a href="http://alasql.org/" target="_blank">AlaSQL</a></li>
-                  <li class="list-group-item">Advanced charting via <a href="http://c3js.org/"
-                      target="_blank">C3.js</a>, the D3-based reusable chart library</li>
-                </ul>
-              </div>
-            </div>
-            <div class="tab-pane fade" id="configuration-tab">
-              <p>This dashboard is designed to fetch a GeoJSON file and present the data in an interactive environment
-                for exploration and analysis.</p>
-              <ol>
-                <li>Fork or download the GitHub repo.</li>
-                <li>Open the <em>assets/js/app.js</em> file and edit the <em>config</em> and <em>properties</em>
-                  variables.</li>
-                <li>The <em>drawCharts()</em> function demonstrates how charts can be configured.</li>
-                <li>Additional map layers can be added to the global <em>map</em> variable.</li>
-              </ol>
-              <p><strong>Notes</strong></p>
-              <ul>
-                <li>Attempting to load huge GeoJSON files will likely cause browser issues.</li>
-                <li>The <em>properties.table</em> object accepts <a
-                    href="http://bootstrap-table.wenzhixin.net.cn/documentation/#column-options"
-                    target="_blank">Bootstrap Table column options</a>.</li>
-                <li>The <em>properties.filter</em> object accepts <a
-                    href="http://mistic100.github.io/jQuery-QueryBuilder/index.html#filters" target="_blank">jQuery
-                    QueryBuilder filter options</a>.</li>
-                <li>Setting the <em>filter.values</em> property to an empty array ([]) will fetch all the distinct
-                  values for that property.</li>
-                <li>Setting the <em>table</em>, <em>filter</em>, or <em>info</em> objects to <em>false</em> will hide
-                  them from that component.</li>
-              </ul>
-            </div>
+          <div class="progress">
+            <div class="progress-bar" id="exporting-progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
           </div>
         </div>
         <div class="modal-footer">

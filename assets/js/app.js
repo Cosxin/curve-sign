@@ -51,7 +51,7 @@ var properties = [{
   value: "old_lat",
   label: "original latitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -59,7 +59,7 @@ var properties = [{
   value: "old_lon",
   label: "original longitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -67,7 +67,7 @@ var properties = [{
   value: "current_lat",
   label: "current latitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -75,7 +75,7 @@ var properties = [{
   value: "current_lng",
   label: "current longitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -83,7 +83,7 @@ var properties = [{
   value: "inclination",
   label: "original curve c-slope",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -110,7 +110,7 @@ var properties = [{
   value: "pcmp",
   label: "curve pcmp",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -125,7 +125,7 @@ var properties = [{
   value: "ptmp",
   label: "curve ptmp",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -156,7 +156,7 @@ var properties = [{
   value: "moved",
   label: "Changed",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -234,6 +234,7 @@ var signInfo = {
 }
 
 var reset = false;
+exporting = false;
 
 function generateTotals() {
   //by curve
@@ -567,7 +568,7 @@ var layerControl = L.control.layers(baseLayers, overlayLayers, {
 
 // Filter table to only show features in current map bounds
 map.on("moveend", function (e) {
-  syncTable();
+  if(!exporting) syncTable();
 });
 
 map.on("click", function (e) {
@@ -760,12 +761,6 @@ function addClickEvents() {
     }
   });
 
-  $("#about-btn").click(function () {
-    $("#aboutModal").modal("show");
-    $(".navbar-collapse.in").collapse("hide");
-    return false;
-  });
-
   $("#filter-btn").click(function () {
     $("#filterModal").modal("show");
     $(".navbar-collapse.in").collapse("hide");
@@ -822,43 +817,52 @@ function addClickEvents() {
     //var data = ('#curveTotalTable').bootstrapTable
     var results = alasql('Select *, MAX(current_lng) as maxlon, MIN(current_lng) as minlon, MAX(current_lat) as maxlat, ' +
         'MIN(current_lat) as minlat from ? Group by curve_id', [features]);
-    results.forEach(function(curve){
+    imgs = [];
+    exporting = true;
+    $("#exportingModal").modal({backdrop: 'static', keyboard: false});
+
+    function mapToImage(i)
+    {
+      if(i >= results.length) {
+        $("#exportingModal").modal("close");
+        exporting = false;
+        return;
+      }
+      var curve = results[i];
       map.fitBounds(L.latLngBounds(L.latLng(curve.maxlat,curve.maxlon), L.latLng(curve.minlat, curve.minlon)));
       leafletImage(map, function(err, canvas) {
         // now you have canvas
         // example thing to do with that canvas:
-        var img = document.createElement('img');
-        var dimensions = map.getSize();
-        img.width = dimensions.x;
-        img.height = dimensions.y;
-        img.src = canvas.toDataURL();
-        document.getElementById('images').innerHTML = '';
-        document.getElementById('images').appendChild(img);
+        imgs.push(canvas.toDataURL());
+        mapToImage(i+1)
+        //document.getElementById('images').innerHTML = '';
+        //document.getElementById('images').appendChild(img);
       });
-
-    });
-    // doc.autoTable({ html: "#totalTable" });
-    // return doc;
-    // $("#table").tableExport({
-    //   type: "pdf",
-    //   ignoreColumn: [0],
-    //   fileName: "data",
-    //   jspdf: {
-    //     format: "bestfit",
-    //     margins: {
-    //       left: 20,
-    //       right: 10,
-    //       top: 20,
-    //       bottom: 20
-    //     },
-    //     autotable: {
-    //       extendWidth: false,
-    //       overflow: "linebreak"
-    //     }
-    //   }
-    // });
-    //$(".navbar-collapse.in").collapse("hide");
-    //return false;
+    }
+    mapToImage(0);
+    /*
+    doc.autoTable({ html: "#totalTable" });
+     return doc;
+     $("#table").tableExport({
+       type: "pdf",
+       ignoreColumn: [0],
+       fileName: "data",
+       jspdf: {
+         format: "bestfit",
+         margins: {
+           left: 20,
+           right: 10,
+           top: 20,
+           bottom: 20
+         },
+         autotable: {
+           extendWidth: false,
+          overflow: "linebreak"
+         }
+       }
+     });
+    $(".navbar-collapse.in").collapse("hide");
+    return false;*/
   });
 
   $("#download-geojson-btn").click(function () {
