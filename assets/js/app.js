@@ -244,7 +244,8 @@ function generateTotals() {
       return {
         id: status.curve_id,
         code: status.sign_code,
-        count: status.Quantity
+        count: status.Quantity,
+        required: status.required
       };
     });
     console.log(data);
@@ -258,6 +259,9 @@ function generateTotals() {
       }, {
         field: 'count',
         title: 'Quantity'
+      },{
+        field: 'required',
+        title: 'Required'
       }],
       data: data,
       groupBy: true,
