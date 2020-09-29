@@ -568,7 +568,7 @@ var layerControl = L.control.layers(baseLayers, overlayLayers, {
 
 // Filter table to only show features in current map bounds
 map.on("moveend", function (e) {
-  if(!exporting) syncTable();
+  if (!exporting) syncTable();
 });
 
 map.on("click", function (e) {
@@ -813,56 +813,30 @@ function addClickEvents() {
   });
 
   $("#download-pdf-btn").click(function () {
-    //var doc = new jsPDF();
-    //var data = ('#curveTotalTable').bootstrapTable
-    var results = alasql('Select *, MAX(current_lng) as maxlon, MIN(current_lng) as minlon, MAX(current_lat) as maxlat, ' +
-        'MIN(current_lat) as minlat from ? Group by curve_id', [features]);
-    imgs = [];
-    exporting = true;
-    $("#exportingModal").modal({backdrop: 'static', keyboard: false});
-
-    function mapToImage(i)
-    {
-      if(i >= results.length) {
-        $("#exportingModal").modal("close");
-        exporting = false;
-        return;
+    var doc = new jspdf.jsPDF();
+    var data = ($('#signTotalTable').bootstrapTable('getData'));
+    console.log(data);
+    doc.text("Total signs needed of each type", 14, 20);
+    doc.autoTable({
+      startY: 25,
+      html: '#signTotalTable',
+      didDrawCell: function (data) {
+        if (data.column.index == 1 && data.cell.section == 'body') {
+          var td = data.cell.raw;
+          var img = td.getElementsByTagName('img')[0];
+          console.log(data.cell);
+          var dim = data.cell.height;
+          doc.addImage(img.src, 'PNG', data.cell.x, data.cell.y, dim, dim);
+        }
       }
-      var curve = results[i];
-      map.fitBounds(L.latLngBounds(L.latLng(curve.maxlat,curve.maxlon), L.latLng(curve.minlat, curve.minlon)));
-      leafletImage(map, function(err, canvas) {
-        // now you have canvas
-        // example thing to do with that canvas:
-        imgs.push(canvas.toDataURL());
-        mapToImage(i+1)
-        //document.getElementById('images').innerHTML = '';
-        //document.getElementById('images').appendChild(img);
-      });
-    }
-    mapToImage(0);
-    /*
-    doc.autoTable({ html: "#totalTable" });
-     return doc;
-     $("#table").tableExport({
-       type: "pdf",
-       ignoreColumn: [0],
-       fileName: "data",
-       jspdf: {
-         format: "bestfit",
-         margins: {
-           left: 20,
-           right: 10,
-           top: 20,
-           bottom: 20
-         },
-         autotable: {
-           extendWidth: false,
-          overflow: "linebreak"
-         }
-       }
-     });
-    $(".navbar-collapse.in").collapse("hide");
-    return false;*/
+    });
+    doc.text('Total signs needed for each curve', 14, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({
+      html: '#curveTotalTable',
+      showHead: 'firstPage',
+      startY: doc.lastAutoTable.finalY + 15,
+    })
+    doc.save('table.pdf');
   });
 
   $("#download-geojson-btn").click(function () {
@@ -870,6 +844,36 @@ function addClickEvents() {
     saveAs(file);
     $(".navbar-collapse.in").collapse("hide");
     return false;
+  });
+
+  $("#download-maps-btn").click(function () {
+    var results = alasql('Select *, MAX(current_lng) as maxlon, MIN(current_lng) as minlon, MAX(current_lat) as maxlat, ' +
+      'MIN(current_lat) as minlat from ? Group by curve_id', [features]);
+    imgs = [];
+    curveIDs = [];
+    exporting = true;
+    $("#exportingModal").modal({ backdrop: 'static', keyboard: false });
+
+    function mapToImage(i) {
+      if (i >= results.length) {
+        $("#exportingModal").modal("close");
+        exporting = false;
+        return;
+      }
+      var curve = results[i];
+      map.fitBounds(L.latLngBounds(L.latLng(curve.maxlat, curve.maxlon), L.latLng(curve.minlat, curve.minlon)));
+      leafletImage(map, function (err, canvas) {
+        // now you have canvas
+        // example thing to do with that canvas:
+        imgs.push(canvas.toDataURL());
+        curveIDs.push(curve.curve_id);
+        mapToImage(i + 1)
+        //document.getElementById('images').innerHTML = '';
+        //document.getElementById('images').appendChild(img);
+      });
+    }
+    mapToImage(0);
+
   });
 
   $("#totalModal").on("shown.bs.modal", function (e) {
