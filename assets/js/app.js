@@ -12,7 +12,7 @@ var properties = [{
   label: "curve_id",
   table: {
     visible: true,
-    sortable: true
+    sortable: true,
   },
   filter: {
     type: "integer"
@@ -51,7 +51,7 @@ var properties = [{
   value: "old_lat",
   label: "original latitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -59,7 +59,7 @@ var properties = [{
   value: "old_lon",
   label: "original longitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -67,7 +67,7 @@ var properties = [{
   value: "current_lat",
   label: "current latitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -75,7 +75,7 @@ var properties = [{
   value: "current_lng",
   label: "current longitude",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   }
 },
@@ -83,7 +83,7 @@ var properties = [{
   value: "inclination",
   label: "original curve c-slope",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -110,7 +110,7 @@ var properties = [{
   value: "pcmp",
   label: "curve pcmp",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -125,7 +125,7 @@ var properties = [{
   value: "ptmp",
   label: "curve ptmp",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -156,7 +156,7 @@ var properties = [{
   value: "moved",
   label: "Changed",
   table: {
-    visible: true,
+    visible: false,
     sortable: true
   },
   filter: {
@@ -234,86 +234,67 @@ var signInfo = {
 }
 
 var reset = false;
+exporting = false;
 
-function drawCharts() {
-  // Status
+function generateTotals() {
+  //by curve
   $(function () {
-    var result = alasql("SELECT status AS label, COUNT(*) AS total FROM ? GROUP BY status", [features]);
-    var columns = $.map(result, function (status) {
-      return [[status.label, status.total]];
+    var result = alasql("SELECT *, COUNT(*) AS Quantity FROM ? GROUP BY curve_id, sign_code", [features]);
+    var data = $.map(result, function (status) {
+      return {
+        id: status.curve_id,
+        code: status.sign_code,
+        count: status.Quantity,
+        required: status.required
+      };
     });
-    var chart = c3.generate({
-      bindto: "#status-chart",
-      data: {
-        type: "pie",
-        columns: columns
-      }
-    });
+    console.log(data);
+    $("#curveTotalTable").bootstrapTable({
+      columns: [{
+        field: 'id',
+        title: 'Curve ID'
+      }, {
+        field: 'code',
+        title: 'Sign Code'
+      }, {
+        field: 'count',
+        title: 'Quantity'
+      },{
+        field: 'required',
+        title: 'Required'
+      }],
+      data: data,
+      groupBy: true,
+      groupByField: 'id',
+      showColumns: true,
+    })
   });
 
-  // Zones
+  //by sign
   $(function () {
-    var result = alasql("SELECT congress_park_inventory_zone AS label, COUNT(*) AS total FROM ? GROUP BY congress_park_inventory_zone", [features]);
-    var columns = $.map(result, function (zone) {
-      return [[zone.label, zone.total]];
-    });
-    var chart = c3.generate({
-      bindto: "#zone-chart",
-      data: {
-        type: "pie",
-        columns: columns
+    var result = alasql("SELECT sign_code as Sign, COUNT(*) AS Quantity FROM ? GROUP BY sign_code", [features]);
+    console.log(result);
+    var data = $.map(result, function (sign) {
+      return {
+        Sign: sign.Sign,
+        Image: "<img class='card-img-top'" + "src='./assets/images/" + sign.Sign + ".png' height= '50px' alt='Card image'>",
+        Quantity: sign.Quantity,
       }
     });
-  });
-
-  // Size
-  $(function () {
-    var sizes = [];
-    var regeneration = alasql("SELECT 'Regeneration (< 3\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) < 3", [features]);
-    var sapling = alasql("SELECT 'Sapling/poles (1-9\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 1 AND 9", [features]);
-    var small = alasql("SELECT 'Small trees (10-14\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 10 AND 14", [features]);
-    var medium = alasql("SELECT 'Medium trees (15-19\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 15 AND 19", [features]);
-    var large = alasql("SELECT 'Large trees (20-29\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) BETWEEN 20 AND 29", [features]);
-    var giant = alasql("SELECT 'Giant trees (> 29\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) > 29", [features]);
-    sizes.push(regeneration, sapling, small, medium, large, giant);
-    var columns = $.map(sizes, function (size) {
-      return [[size[0].category, size[0].total]];
-    });
-    var chart = c3.generate({
-      bindto: "#size-chart",
-      data: {
-        type: "pie",
-        columns: columns
-      }
-    });
-  });
-
-  // Species
-  $(function () {
-    var result = alasql("SELECT species_sim AS label, COUNT(*) AS total FROM ? GROUP BY species_sim ORDER BY label ASC", [features]);
-    var chart = c3.generate({
-      bindto: "#species-chart",
-      size: {
-        height: 2000
-      },
-      data: {
-        json: result,
-        keys: {
-          x: "label",
-          value: ["total"]
-        },
-        type: "bar"
-      },
-      axis: {
-        rotated: true,
-        x: {
-          type: "category"
-        }
-      },
-      legend: {
-        show: false
-      }
-    });
+    $("#signTotalTable").bootstrapTable({
+      columns: [{
+        field: 'Sign',
+        title: "Sign",
+      }, {
+        field: 'Image',
+        title: 'Image',
+      }, {
+        field: 'Quantity',
+        title: 'Quantity',
+      }],
+      data: data,
+      showColumns: true,
+    })
   });
 }
 
@@ -544,7 +525,8 @@ $.getJSON(config.geojson, function (data) {
 });
 
 var map = L.map("map", {
-  layers: [OpenStreetMap_Mapnik, featureLayer, highlightLayer]
+  layers: [OpenStreetMap_Mapnik, featureLayer, highlightLayer],
+  preferCanvas: true
 }).fitWorld();
 
 // ESRI geocoder
@@ -590,7 +572,7 @@ var layerControl = L.control.layers(baseLayers, overlayLayers, {
 
 // Filter table to only show features in current map bounds
 map.on("moveend", function (e) {
-  syncTable();
+  if (!exporting) syncTable();
 });
 
 map.on("click", function (e) {
@@ -783,20 +765,14 @@ function addClickEvents() {
     }
   });
 
-  $("#about-btn").click(function () {
-    $("#aboutModal").modal("show");
-    $(".navbar-collapse.in").collapse("hide");
-    return false;
-  });
-
   $("#filter-btn").click(function () {
     $("#filterModal").modal("show");
     $(".navbar-collapse.in").collapse("hide");
     return false;
   });
 
-  $("#chart-btn").click(function () {
-    $("#chartModal").modal("show");
+  $("#total-btn").click(function () {
+    $("#totalModal").modal("show");
     $(".navbar-collapse.in").collapse("hide");
     return false;
   });
@@ -841,26 +817,30 @@ function addClickEvents() {
   });
 
   $("#download-pdf-btn").click(function () {
-    $("#table").tableExport({
-      type: "pdf",
-      ignoreColumn: [0],
-      fileName: "data",
-      jspdf: {
-        format: "bestfit",
-        margins: {
-          left: 20,
-          right: 10,
-          top: 20,
-          bottom: 20
-        },
-        autotable: {
-          extendWidth: false,
-          overflow: "linebreak"
+    var doc = new jspdf.jsPDF();
+    var data = ($('#signTotalTable').bootstrapTable('getData'));
+    console.log(data);
+    doc.text("Total signs needed of each type", 14, 20);
+    doc.autoTable({
+      startY: 25,
+      html: '#signTotalTable',
+      didDrawCell: function (data) {
+        if (data.column.index == 1 && data.cell.section == 'body') {
+          var td = data.cell.raw;
+          var img = td.getElementsByTagName('img')[0];
+          console.log(data.cell);
+          var dim = data.cell.height;
+          doc.addImage(img.src, 'PNG', data.cell.x, data.cell.y, dim, dim);
         }
       }
     });
-    $(".navbar-collapse.in").collapse("hide");
-    return false;
+    doc.text('Total signs needed for each curve', 14, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({
+      html: '#curveTotalTable',
+      showHead: 'firstPage',
+      startY: doc.lastAutoTable.finalY + 15,
+    })
+    doc.save('table.pdf');
   });
 
   $("#download-geojson-btn").click(function () {
@@ -870,8 +850,38 @@ function addClickEvents() {
     return false;
   });
 
-  $("#chartModal").on("shown.bs.modal", function (e) {
-    drawCharts();
+  $("#download-maps-btn").click(function () {
+    var results = alasql('Select *, MAX(current_lng) as maxlon, MIN(current_lng) as minlon, MAX(current_lat) as maxlat, ' +
+      'MIN(current_lat) as minlat from ? Group by curve_id', [features]);
+    imgs = [];
+    curveIDs = [];
+    exporting = true;
+    $("#exportingModal").modal({ backdrop: 'static', keyboard: false });
+
+    function mapToImage(i) {
+      if (i >= results.length) {
+        $("#exportingModal").modal("close");
+        exporting = false;
+        return;
+      }
+      var curve = results[i];
+      map.fitBounds(L.latLngBounds(L.latLng(curve.maxlat, curve.maxlon), L.latLng(curve.minlat, curve.minlon)));
+      leafletImage(map, function (err, canvas) {
+        // now you have canvas
+        // example thing to do with that canvas:
+        imgs.push(canvas.toDataURL());
+        curveIDs.push(curve.curve_id);
+        mapToImage(i + 1)
+        //document.getElementById('images').innerHTML = '';
+        //document.getElementById('images').appendChild(img);
+      });
+    }
+    mapToImage(0);
+
+  });
+
+  $("#totalModal").on("shown.bs.modal", function (e) {
+    generateTotals();
   });
 }
 

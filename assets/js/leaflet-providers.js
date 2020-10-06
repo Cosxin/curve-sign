@@ -1,6 +1,6 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		// AMD. Register as an anonymous module. 
+		// AMD. Register as an anonymous module.
 		define(['leaflet'], factory);
 	} else if (typeof modules === 'object' && module.exports) {
 		// define a Common JS module that relies on 'leaflet'
@@ -219,7 +219,7 @@
 			}
 		},
 		CyclOSM: {
-			url: 'https://dev.{s}.tile.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+			url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
 			options: {
 				maxZoom: 20,
 				attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: {attribution.OpenStreetMap}'
@@ -724,11 +724,11 @@
 			}
 		},
 		FreeMapSK: {
-			url: 'http://t{s}.freemap.sk/T/{z}/{x}/{y}.jpeg',
+			url: 'https://{s}.freemap.sk/T/{z}/{x}/{y}.jpeg',
 			options: {
 				minZoom: 8,
 				maxZoom: 16,
-				subdomains: '1234',
+				subdomains: 'abcd',
 				bounds: [[47.204642, 15.996093], [49.830896, 22.576904]],
 				attribution:
 					'{attribution.OpenStreetMap}, vizualization CC-By-SA 2.0 <a href="http://freemap.sk">Freemap.sk</a>'
