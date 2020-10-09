@@ -985,7 +985,7 @@ var generateTotals = function() {
         width: 50,
         align: 'center'
       }, {
-        field: 'direction',
+        field: 'route_direction',
         title: 'Curve Direction',
         align: 'center'
       }, {
@@ -1006,7 +1006,7 @@ var generateTotals = function() {
         align: 'center'
       },
       {
-        field: 'distance',
+        field: 'distance_from_pc',
         title: 'Distance to PC',
         align: 'center'
       },
