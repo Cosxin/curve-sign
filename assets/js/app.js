@@ -536,6 +536,7 @@ var layerControl = L.control.layers(baseLayers, overlayLayers, {
   collapsed: isCollapsed
 }).addTo(map);
 
+var scaleBar = L.control.scale().addTo(map);
 
 // Filter table to only show features in current map bounds
 map.on("moveend", function (e) {
