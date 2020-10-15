@@ -4,7 +4,7 @@ var config = {
   layerNames: ["Signs"],
   hoverProperty: "designation",
   sortProperty: "curve_id",
-  sortOrder: "desc"
+  sortOrder: "desc",
 };
 
 var metaInfo =
@@ -37,6 +37,11 @@ var metaInfo =
         key: "Model Geometry",
         value: "Parabolic"
       },
+      {
+        key: "Global Offset",
+        value: 0,
+
+      }
     ]
 
 var properties = [{
@@ -306,8 +311,6 @@ function buildConfig() {
     }
   }];
 
-
-
   $.each(properties, function (index, value) {
     // Filter config
     if (value.filter) {
@@ -361,27 +364,13 @@ function buildConfig() {
   buildSidebar();
 }
 
-
-// Basemap Layers
-
-var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
-
 var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
-/*
-var mapquestHYB = L.layerGroup([L.tileLayer("http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg", {
-  maxZoom: 18,
-  subdomains: ["oatile1", "oatile2", "oatile3", "oatile4"]
-}), L.tileLayer("http://{s}.mqcdn.com/tiles/1.0.0/hyb/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  subdomains: ["oatile1", "oatile2", "oatile3", "oatile4"],
-  attribution: 'Labels courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">. Map data (c) <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors, CC-BY-SA. Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'
-})]);
-*/
+
 
 var highlightLayer = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
@@ -409,16 +398,12 @@ var highlightLayer = L.geoJson(null, {
 
 var featureLayer = L.geoJson(null, {
   filter: function (feature, layer) {
-    latitude = feature.geometry.coordinates[0];
-    longitude = feature.geometry.coordinates[1];
     return feature.geometry.coordinates[0] !== 0 && feature.geometry.coordinates[1] !== 0;
   },
-  /*style: function (feature) {
-    return {
-      color: feature.properties.color
-    };
-  },*/
-  pointToLayer: function (feature, latlng) {
+  pointToLayer: function (feature, feature_latlng) {
+    var latlng =
+        L.latLng(feature_latlng.lat + offset * feature.properties.outer_vector_lat,
+                 feature_latlng.lng + offset * feature.properties.outer_vector_lon);
     if (feature.properties && feature.properties["marker-color"]) {
       markerColor = feature.properties["marker-color"];
     } else {
@@ -492,7 +477,7 @@ $.getJSON(config.geojson, function (data) {
 });
 
 var map = L.map("map", {
-  layers: [OpenStreetMap_Mapnik, featureLayer, highlightLayer],
+  layers: [Esri_WorldStreetMap, featureLayer],
   preferCanvas: true
 }).fitWorld();
 
@@ -500,7 +485,6 @@ var map = L.map("map", {
 var searchControl = L.esri.Geocoding.geosearch({
   useMapBounds: 17
 }).addTo(map);
-
 
 // Info control
 var info = L.control({
@@ -519,6 +503,22 @@ info.update = function (props) {
 info.addTo(map);
 $(".info-control").hide();
 
+
+var offset = 0;
+
+var slider = L.control.slider(function(value) {
+    if(typeof features != "undefined")
+    {
+      console.log("moving features")
+      offset = value / 1000;
+      featureLayer.clearLayers();
+      featureLayer.addData(geojson);
+    }
+},
+    {id:slider, width: '300px',
+  orientation: 'horizontal',min:-1, max:1, step:0.01, value: 0, offset: 'O'});
+slider.addTo(map);
+
 // Larger screens get expanded layer control
 if (document.body.clientWidth <= 767) {
   isCollapsed = true;
@@ -526,7 +526,7 @@ if (document.body.clientWidth <= 767) {
   isCollapsed = false;
 }
 var baseLayers = {
-  "Street Map": OpenStreetMap_Mapnik,
+  "Street Map": Esri_WorldStreetMap,
   "Aerial Imagery": Esri_WorldImagery
 };
 var overlayLayers = {
@@ -947,7 +947,6 @@ function handleDrop(e) {
 
 
 // Generate Total After LoadGeoJSON is complete
-
 
 var reset = false;
 exporting = false;
