@@ -6,6 +6,7 @@ var config = {
 }
 
 //groups the points by their curve_id into an object
+var numCurves = 0;
 function groupCurves(data) {
     var curves = new Object()
     prevCurveID = null;
@@ -15,7 +16,7 @@ function groupCurves(data) {
         if (prevCurveID == null || currID != prevCurveID) {
             curves[currID] = [point];
             prevCurveID = currID;
-
+            numCurves++;
         } else {
             curves[currID].push(point);
         }
@@ -72,15 +73,13 @@ function createLayer() {
 //generates tables given the curves object
 //can potentially generate the maps here, using only the points in that curve so that only the markers for that curve show
 function generateTables(data) {
-    var test;
-    console.log(test)
     for (var index in data) {
         curve = data[index];
         //establish header
         currID = curve[0].properties.curve_id;
-        var content = "<h2> Curve " +  currID +  "</h2> <table class='table'><thead><tr> <th scope='col'>#</th><th scope='col'>Curve Direction</th><th scope='col'>Sign Type</th><th scope='col'>Side of Curve</th><th scope='col'>Distance to PC</th><th scope='col'>Mile Post</th><th scope='col'>Required</th></tr></thead><tbody>";
+        tableID = "table" + index;
+        var content = "<h2> Curve " +  currID +  "</h2> <table id=" + tableID + " class='table'><thead><tr> <th scope='col'>#</th><th scope='col'>Curve Direction</th><th scope='col'>Sign Type</th><th scope='col'>Side of Curve</th><th scope='col'>Distance to PC</th><th scope='col'>Mile Post</th><th scope='col'>Required</th></tr></thead><tbody>";
         var currLayer = createLayer();
-        console.log(curve);
         for (var pointIndex in curve) {
             currLayer.addData(curve[pointIndex]);
             content+= "<tr> <th scope = 'row'>" + pointIndex + "</th>";
@@ -93,21 +92,17 @@ function generateTables(data) {
 
         }
         content+= "</tr></tbody></table>";
-        console.log(curve);
         mapID = "map" + index;
-        console.log(mapID);
         content+="<div id = " + mapID + " class='map-container'></div><P style='page-break-before: always'>";
         $('#testTables').append(content);
-        var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-});
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          });
         L.map(mapID, {
-            layers: [Esri_WorldStreetMap, currLayer]
+            layers: [Esri_WorldImagery, currLayer]
         }).fitBounds(currLayer.getBounds());
-        console.log(mapID);
 
     }
-    print();
 }
 
 
@@ -123,3 +118,38 @@ $.getJSON(config.geojson, function(data) {
     generateTables(curves);
     //using microsoft print to pdf
 })
+
+$("#download-pdf-btn").click(async function() {
+    var doc = new jspdf.jsPDF();
+
+    doc.setFontSize(22);
+    doc.text("Curve Sign Analysis Report", doc.internal.pageSize.getWidth()/2, 15, {align:'center'} );
+
+    doc.setFontSize(18);
+    doc.text("Georgia Institute of Technology", doc.internal.pageSize.getWidth()/2, 25, {align:'center'} );
+    var width = doc.internal.pageSize.getWidth();
+    var table = document.getElementById("table1");
+    doc.autoTable({
+        startY: 50,
+        html: table,
+    }) ;
+    for (i = 0; i < numCurves; i++) {
+        var table = document.getElementById("table" + i);
+        var map = document.getElementById("map" + i);
+        console.log("MADE IT");
+        doc.autoTable({
+            startY: doc.lastAutoTable.finalY + 300,
+            html: table,
+        });
+        await domtoimage.toPng(map) 
+            .then(function (dataURL) {
+                var img = new Image();
+                img.src = dataURL;
+                doc.addImage(img, 'PNG', 0, doc.lastAutoTable.finalY + 15, width, 100)
+            })
+            .catch(function (error) {
+                console.error("error creating " + map, error);
+            });
+    }
+    doc.save('report.pdf');
+});

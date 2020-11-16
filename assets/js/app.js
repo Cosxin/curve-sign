@@ -788,7 +788,6 @@ function addClickEvents() {
   $("#download-pdf-btn").click(function () {
     var doc = new jspdf.jsPDF();
     var data = ($('#signTotalTable').bootstrapTable('getData'));
-    console.log(data);
 
     doc.setFontSize(22);
     doc.text("Curve Sign Analysis Report", doc.internal.pageSize.getWidth()/2, 15, {align:'center'} );
