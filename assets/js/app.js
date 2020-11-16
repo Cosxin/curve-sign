@@ -361,15 +361,9 @@ function buildConfig() {
 
   buildFilters();
   buildTable();
-  buildSidebar();
 }
 
-var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-});
-var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-});
+
 
 
 var highlightLayer = L.geoJson(null, {
@@ -464,8 +458,10 @@ var featureLayer = L.geoJson(null, {
   }
 });
 
-
+////////////////////////////////////////
 // Fetch the GeoJSON file
+////////////////////////////////////////
+
 $.getJSON(config.geojson, function (data) {
   geojson = data;
   features = $.map(geojson.features, function (feature) {
@@ -477,55 +473,42 @@ $.getJSON(config.geojson, function (data) {
   $("#loading-mask").hide();
 });
 
-var map = L.map("map", {
-  layers: [Esri_WorldStreetMap, featureLayer],
-  preferCanvas: true
-}).fitWorld();
 
-// ESRI geocoder
-var searchControl = L.esri.Geocoding.geosearch({
-  useMapBounds: 17
-}).addTo(map);
-
-// Info control
-var info = L.control({
-  position: "bottomleft"
-});
-
-// Custom info hover control
-info.onAdd = function (map) {
-  this._div = L.DomUtil.create("div", "info-control");
-  this.update();
-  return this._div;
-};
-info.update = function (props) {
-  this._div.innerHTML = "";
-};
-info.addTo(map);
-$(".info-control").hide();
-
-
-var offset = 0;
-
-var slider = L.control.slider(function(value) {
-    if(typeof features != "undefined")
-    {
-      console.log("moving features")
-      offset = value / 1000;
-      featureLayer.clearLayers();
-      featureLayer.addData(geojson);
-    }
-},
-    {id:slider, width: '300px',
-  orientation: 'horizontal',min:-1, max:1, step:0.01, value: 0, offset: 'O'});
-slider.addTo(map);
-
+////////////////////////////////////////
 // Larger screens get expanded layer control
+////////////////////////////////////////
+
 if (document.body.clientWidth <= 767) {
   isCollapsed = true;
 } else {
   isCollapsed = false;
 }
+
+
+////////////////////////////////////////
+// Map Layers (Specify Map Providers) and Map Controls
+////////////////////////////////////////
+
+var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+
+var map = L.map("map", {
+  layers: [Esri_WorldStreetMap, featureLayer],
+  preferCanvas: true
+}).fitWorld();
+
+var searchControl = L.esri.Geocoding.geosearch({
+  useMapBounds: 17
+}).addTo(map);
+
+var info = L.control({
+  position: "bottomleft"
+});
+
 var baseLayers = {
   "Street Map": Esri_WorldStreetMap,
   "Aerial Imagery": Esri_WorldImagery
@@ -537,18 +520,61 @@ var layerControl = L.control.layers(baseLayers, overlayLayers, {
   collapsed: isCollapsed
 }).addTo(map);
 
-var scaleBar = L.control.scale().addTo(map);
+var scaleBar = L.control.scale().addTo(map); // Ruler
 
+
+////////////////////////////////////////
+// Custom info hover control
+////////////////////////////////////////
+
+info.onAdd = function (map) {
+  this._div = L.DomUtil.create("div", "info-control");
+  this.update();
+  return this._div;
+};
+info.update = function (props) {
+  this._div.innerHTML = "";
+};
+info.addTo(map);
+$(".info-control").hide();
+
+////////////////////////////////////////
+// Global Offset Slider
+////////////////////////////////////////
+
+var offset = 0;
+
+var slider = L.control.slider(function(value) {
+      if(typeof features != "undefined")
+      {
+        console.log("moving features")
+        offset = value / 1000;
+        featureLayer.clearLayers();
+        featureLayer.addData(geojson);
+      }
+    },
+    {id:slider, width: '300px',
+      orientation: 'horizontal',min:-1, max:1, step:0.01, value: 0, offset: 'O'});
+slider.addTo(map);
+
+
+////////////////////////////////////////
 // Filter table to only show features in current map bounds
+////////////////////////////////////////
+
 map.on("moveend", function (e) {
-  if (!exporting) syncTable();
+   syncTable();
 });
 
 map.on("click", function (e) {
   highlightLayer.clearLayers();
 });
 
+
+////////////////////////////////////////
 // Table formatter to make links clickable
+////////////////////////////////////////
+
 function urlFormatter(value, row, index) {
   if (typeof value == "string" && (value.indexOf("http") === 0 || value.indexOf("https") === 0)) {
     return "<a href='" + value + "' target='_blank'>" + value + "</a>";
@@ -574,6 +600,10 @@ function applyFilter() {
     syncTable();
   });
 }
+
+////////////////////////////////////////
+// Build the Main View Table
+////////////////////////////////////////
 
 function buildTable() {
   $("#table").bootstrapTable({
@@ -635,15 +665,18 @@ function syncTable() {
     $("#feature-count").html($("#table").bootstrapTable("getData").length + " visible features");
   }
 }
+
 function resetMarker(id) {
   var layer = featureLayer.getLayer(id);
   layer.setLatLng([layer.feature.properties.old_lat, layer.feature.properties.old_lon]);
   syncTable();
 }
+
 function deleteMarker(id) {
   featureLayer.removeLayer(id);
   syncTable();
 }
+
 function identifyFeature(id) {
   var featureProperties = featureLayer.getLayer(id).feature.properties;
   var content = "<table class='table table-striped table-bordered table-condensed'>";
@@ -678,9 +711,11 @@ function buildSidebar() {
   }
   );
 }
-/*
-  Register button callback functions
-*/
+
+
+////////////////////////////////////////
+// Register button callback functions
+////////////////////////////////////////
 
 $(function () {
   addClickEvents();
@@ -786,43 +821,10 @@ function addClickEvents() {
   });
 
   $("#download-pdf-btn").click(function () {
-    var doc = new jspdf.jsPDF();
-    var data = ($('#signTotalTable').bootstrapTable('getData'));
-
-    doc.setFontSize(22);
-    doc.text("Curve Sign Analysis Report", doc.internal.pageSize.getWidth()/2, 15, {align:'center'} );
-
-    doc.setFontSize(18);
-    doc.text("Georgia Institute of Technology", doc.internal.pageSize.getWidth()/2, 25, {align:'center'} );
-
-    doc.setFontSize(15);
-    doc.text('Metadata', 14, 40);
-    doc.autoTable({
-      startY: 45,
-      html: '#metaTotalTable',
-    });
-
-    doc.text('Total Sign Inventory', 14, doc.lastAutoTable.finalY + 15);
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 15 + 5,
-      html: '#signTotalTable',
-      didDrawCell: function (data) {
-        if (data.column.index == 1 && data.cell.section == 'body') {
-          var td = data.cell.raw;
-          var img = td.getElementsByTagName('img')[0];
-          var dim = data.cell.height;
-          doc.addImage(img.src, 'PNG', data.cell.x, data.cell.y, dim, dim);
-        }
-      }
-    });
-
-    doc.text('Total signs needed for each curve', 14, doc.lastAutoTable.finalY + 15);
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 15 + 5,
-      html: '#curveTotalTable',
-      showHead: 'firstPage',
-    })
-    doc.save('table.pdf');
+    window.localStorage.metaInfo = JSON.stringify(metaInfo);
+    window.localStorage.featureInfo = JSON.stringify(featureLayer.toGeoJSON());
+    window.open('./report.html', '_blank');
+    return false;
   });
 
   $("#download-geojson-btn").click(function () {
@@ -832,45 +834,14 @@ function addClickEvents() {
     return false;
   });
 
-  $("#download-maps-btn").click(function () {
-    var results = alasql('Select *, MAX(current_lng) as maxlon, MIN(current_lng) as minlon, MAX(current_lat) as maxlat, ' +
-      'MIN(current_lat) as minlat from ? Group by curve_id', [features]);
-    imgs = [];
-    curveIDs = [];
-    exporting = true;
-    $("#exportingModal").modal({ backdrop: 'static', keyboard: false });
-
-    function mapToImage(i) {
-      if (i >= results.length) {
-        $("#exportingModal").modal("close");
-        exporting = false;
-        return;
-      }
-      var curve = results[i];
-      map.fitBounds(L.latLngBounds(L.latLng(curve.maxlat, curve.maxlon), L.latLng(curve.minlat, curve.minlon)));
-      leafletImage(map, function (err, canvas) {
-        // now you have canvas
-        // example thing to do with that canvas:
-        imgs.push(canvas.toDataURL());
-        curveIDs.push(curve.curve_id);
-        mapToImage(i + 1)
-        //document.getElementById('images').innerHTML = '';
-        //document.getElementById('images').appendChild(img);
-      });
-    }
-    mapToImage(0);
-
-  });
-
   $("#totalModal").on("shown.bs.modal", function (e) {
     generateTotals();
   });
 }
 
-/*
-  Functions to support Drag-n-Drop GeoJSON
- */
-
+////////////////////////////////////////
+// Functions to support Drag-n-Drop GeoJSON
+////////////////////////////////////////
 
 function addDropEvents() {
   // set up the drag & drop events
@@ -945,11 +916,9 @@ function handleDrop(e) {
 
 
 
-
+////////////////////////////////////////
 // Generate Total After LoadGeoJSON is complete
-
-var reset = false;
-exporting = false;
+////////////////////////////////////////
 
 var generateTotals = function() {
   //metadata
@@ -969,15 +938,6 @@ var generateTotals = function() {
 
   //by curve
   $(function () {
-    /*var result = alasql("SELECT * from", [features]);
-    var data = $.map(result, function (status) {
-      return {
-        id: status.curve_id,
-        code: status.sign_code,
-        count: status.Quantity,
-        required: status.required
-      };
-    });*/
     $("#curveTotalTable").bootstrapTable({
       columns: [{
         field: 'curve_id',
