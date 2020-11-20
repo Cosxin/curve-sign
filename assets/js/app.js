@@ -1,5 +1,5 @@
 var config = {
-  geojson: "./data/geoJSON_result.geojson",
+  geojson: "./data/results.geojson",
   title: "Curve Sign Dashboard",
   layerNames: ["Signs"],
   hoverProperty: "designation",
