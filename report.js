@@ -78,7 +78,7 @@ function generateTables(data) {
         //establish header
         currID = curve[0].properties.curve_id;
         tableID = "table" + index;
-        var content = "<h5> Curve " +  currID +  "</h5> <table id=" + tableID + " class='table'><thead><tr> <th scope='col'>#</th><th scope='col'>Curve Direction</th><th scope='col'>Sign Type</th><th scope='col'>Side of Curve</th><th scope='col'>Distance to PC</th><th scope='col'>Mile Post</th><th scope='col'>Required</th></tr></thead><tbody>";
+        var content = "<table id=" + tableID + " class='table'><thead><tr> <th scope='col'> Curve " + index + "</th><th scope='col'>Curve Direction</th><th scope='col'>Sign Type</th><th scope='col'>Side of Curve</th><th scope='col'>Distance to PC</th><th scope='col'>Mile Post</th><th scope='col'>Required</th></tr></thead><tbody>";
         var currLayer = createLayer();
         for (var pointIndex in curve) {
             currLayer.addData(curve[pointIndex]);
@@ -154,6 +154,7 @@ function generateTotals(geojson, metaInfo) {
 ////////////////////////////////////////
 // Run Once on Initialize
 ////////////////////////////////////////
+var curves;
 
 $(function(){
     geojson = JSON.parse(window.localStorage.featureInfo);
@@ -196,12 +197,7 @@ $(document).ready(function(){
         });
 
         var width = doc.internal.pageSize.getWidth();
-        var table = document.getElementById("table1");
-        doc.autoTable({
-            startY: 45,
-            html: table,
-        }) ;
-        for (i = 0; i < numCurves; i++) {
+        for (var i of Object.keys(curves)) {
             var table = document.getElementById("table" + i);
             var map = document.getElementById("map" + i);
             console.log("MADE IT");
@@ -213,7 +209,7 @@ $(document).ready(function(){
                 .then(function (dataURL) {
                     var img = new Image();
                     img.src = dataURL;
-                    doc.addImage(img, 'PNG', 0, doc.lastAutoTable.finalY + 15, width, 100)
+                    doc.addImage(img, 'PNG', 14, doc.lastAutoTable.finalY + 15, width - 14, 100)
                 })
                 .catch(function (error) {
                     console.error("error creating " + map, error);
