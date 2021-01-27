@@ -13,7 +13,7 @@ Details will be discussed in individual meetings.
         * Remove unused codes
     * Use Npm and Webpack (client side only bundle) (1 wk)
         * Low priority, last task to do
-    * Implement sign placement interval and allow user to upload a ground truth sign GeoJSON (4 wks, **important**)
+    * Implement sign placement interval and allow user to upload a ground truth sign GeoJSON (4 wks)
         * The interval should be computed from the current location
         * A global value to configure the interval
         * Highlight missing sign in one color
@@ -27,9 +27,9 @@ Details will be discussed in individual meetings.
         * Make them draggable icons/buttons, and when drag and drop to map to add a sign at the cursor location
         * Add CSS to improve the UI, e.g box-shadow, on hover etc.
         * Add a field in the table/geojson to indicate that this sign has been manually added
-    * Group each Curve as a Layer (LayerGroups) (2 wks)
+    * Group each Curve as a Layer (LayerGroups) (3 wks, **important**)
         * Use CurveID as layer identificaton, see leaflet examples.
-    * Move the entire backend curve-sign-placement logic to the frontend (8 wks, **important**)
+    * Move the entire backend curve-sign-placement logic to the frontend (8 wks)
         * Review backend code to understand how sign locations are determined
         * Associate each sign with curve by curveID (partially completed)
         * Store curves as polyline with pc,pt,advSpeed,Radius attributes in GeoJSON
