@@ -152,7 +152,7 @@ function generateTotals(geojson, metaInfo) {
 
 
 ////////////////////////////////////////
-// Run Once on Initialize
+// Initialize, the map sign features should be stored in the localStorage.
 ////////////////////////////////////////
 var curves;
 

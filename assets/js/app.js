@@ -522,9 +522,14 @@ var layerControl = L.control.layers(baseLayers, overlayLayers, {
 
 var scaleBar = L.control.scale().addTo(map); // Ruler
 
+////////////////////////////////////////
+// Added Measurement Control
+////////////////////////////////////////
+
+var polyMeasure = L.control.polylineMeasure().addTo(map);
 
 ////////////////////////////////////////
-// Custom info hover control
+// Add info hover control
 ////////////////////////////////////////
 
 info.onAdd = function (map) {
@@ -554,7 +559,7 @@ var slider = L.control.slider(function(value) {
       }
     },
     {id:slider, width: '300px',
-      orientation: 'horizontal',min:-1, max:1, step:0.01, value: 0, offset: 'O'});
+      orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
 slider.addTo(map);
 
 
@@ -628,6 +633,12 @@ function buildTable() {
     onDblClickRow: function (row) {
       map.panTo(new L.LatLng(row.current_lat, row.current_lng));
       // do something!
+    },
+    onEditableSave:function(field, row, rowIdx, el)
+    {
+      var newValue = row[field]
+      var marker = featureLayer.getLayer(row.leaflet_stamp);
+      marker.feature.properties[field] = newValue
     }
   });
 
