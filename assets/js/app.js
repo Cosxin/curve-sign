@@ -5,6 +5,8 @@ var config = {
   hoverProperty: "designation",
   sortProperty: "curve_id",
   sortOrder: "desc",
+  iconWidth: 15,
+  iconHeight: 20,
 };
 
 var metaInfo =
@@ -405,7 +407,7 @@ var featureLayer = L.geoJson(null, {
     }
     var icon = L.icon({
       iconUrl: feature.properties["icon_url"],
-      iconSize: [25, 30]
+      iconSize: [config.iconWidth, config.iconHeight]
     });
     var marker = L.marker(latlng, {
       icon: icon,
