@@ -1,0 +1,43 @@
+{
+    "geometry": {
+        "coordinates": [
+            -83.60705972992776,
+            34.89725210952032
+        ],
+        "type": "Point"
+    },
+    "properties": {
+        "asl": 35.0,
+        "curb_side_offset": 1.5,
+        "curve_center_lat": 34.89820284671507,
+        "curve_center_lon": -83.60308048951917,
+        "curve_direction": "RIGHT",
+        "curve_id": 42,
+        "custom_label": 35.0,
+        "designation": "w13-1p",
+        "distance_from_pc": 0.0,
+        "icon_url": "./assets/images/w13-1P.png",
+        "inclination": 0.0,
+        "mile_post": "0.875",
+        "moved": false,
+        "old_lat": 34.89725210952032,
+        "old_lon": -83.60705972992776,
+        "oldmp": "0.875",
+        "outer_vector_lat": -0.3140869446456255,
+        "outer_vector_lon": -0.9493942232830236,
+        "pc_lat": 34.89725210952032,
+        "pc_lon": -83.60705972992776,
+        "pcmp": 0,
+        "psl": 45.0,
+        "pt_;at": 34.89659459896904,
+        "pt_lon": -83.60673085002595,
+        "ptmp": 1,
+        "required": "OPTIONAL",
+        "road_side": "RIGHT",
+        "route_direction": "EAST",
+        "sign_code": "w13-1P",
+        "sign_direction": 108.31887709510876,
+        "sign_elevation": 0
+    },
+    "type": "Feature"
+}

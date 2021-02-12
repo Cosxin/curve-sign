@@ -394,6 +394,7 @@ var highlightLayer = L.geoJson(null, {
 
 var featureLayer = L.geoJson(null, {
   filter: function (feature, layer) {
+    addDynamicSlider(feature);
     return feature.geometry.coordinates[0] !== 0 && feature.geometry.coordinates[1] !== 0;
   },
   pointToLayer: function (feature, feature_latlng) {
@@ -564,7 +565,103 @@ var slider = L.control.slider(function(value) {
       orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
 slider.addTo(map);
 
+/*
+34.89725210952032,
+        "pc_lon": -83.60705972992776
+        34.89820284671507,
+        "curve_center_lon": -83.60308048951917
+        "pc_lat": 34.89725210952032,
+        "pc_lon": -83.60705972992776,
+        "pt_;at": 34.89659459896904,
+        "pt_lon": -83.60673085002595,
+*/
+/*
+var pointA = new L.LatLng(34.89725210952032, -83.60705972992776);
+var pointB = new L.LatLng(34.89659459896904, -83.60673085002595);
+var pointC = new L.LatLng(34.89820284671507, -83.60308048951917);
+var pointList = [pointA, pointC];
+var secondPointList = [pointB, pointC];
 
+var firstpolyline = new L.Polyline(pointList, {
+    color: 'red',
+    weight: 1,
+    opacity: 0.5,
+    smoothFactor: 1
+});
+firstpolyline.addTo(map);
+
+var secondpolyline = new L.Polyline(secondPointList, {
+  color: 'red',
+  weight: 1,
+  opacity: 0.5,
+  smoothFactor: 1
+});
+secondpolyline.addTo(map);
+
+var centerIcon = L.icon({
+  iconUrl: './assets/images/42.png',
+  iconSize: [20, 20]
+});
+L.marker([34.89820284671507, -83.60308048951917], {icon: centerIcon}).addTo(map).on('click', function(e) {
+  // Dynamic Slider
+  var dynamicSlider = L.control.dynamicSlider(function(value) {
+    if(typeof features != "undefined")
+    {
+      console.log("dynamic moving features")
+      offset = value / 1000;
+      featureLayer.clearLayers();
+      featureLayer.addData(geojson);
+    }
+  },
+  {id:slider, width: '300px', positon: 'topleft',
+    orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
+  dynamicSlider.addTo(map);
+});*/
+function addDynamicSlider(feature){
+  //console.log("___________");
+  //console.log(feature);
+  var pointA = new L.LatLng(feature.properties.pc_lat, feature.properties.pc_lon);
+  var pointB = new L.LatLng(feature.properties.pt_lat, feature.properties.pt_lon);
+  var pointC = new L.LatLng(feature.properties.curve_center_lat, feature.properties.curve_center_lon);
+  var pointList = [pointA, pointC];
+  var secondPointList = [pointB, pointC];
+
+  var firstpolyline = new L.Polyline(pointList, {
+      color: 'red',
+      weight: 1,
+      opacity: 0.5,
+      smoothFactor: 1
+  });
+  firstpolyline.addTo(map);
+
+  var secondpolyline = new L.Polyline(secondPointList, {
+    color: 'red',
+    weight: 1,
+    opacity: 0.5,
+    smoothFactor: 1
+  });
+  secondpolyline.addTo(map);
+
+  var centerIcon = L.icon({
+    iconUrl: './assets/images/42.png',
+    iconSize: [20, 20]
+  });
+  L.marker(pointC, {icon: centerIcon}).addTo(map).on('click', function(e) {
+    // Dynamic Slider
+    var dynamicSlider = L.control.dynamicSlider(function(value) {
+      if(typeof features != "undefined")
+      {
+        console.log("dynamic moving features")
+        offset = value / 1000;
+        featureLayer.clearLayers();
+        featureLayer.addData(geojson);
+      }
+    },
+    {id:slider, width: '300px', positon: 'topleft',
+      orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
+    dynamicSlider.addTo(map);
+  });
+}
 ////////////////////////////////////////
 // Filter table to only show features in current map bounds
 ////////////////////////////////////////
