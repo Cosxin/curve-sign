@@ -392,9 +392,30 @@ var highlightLayer = L.geoJson(null, {
   }
 });
 
+var numDynamicSliders = 0;
+var currentDynamicSliders = null;
+
+var hashMap = {};
+var newHashMap = {features: [], type: "FeatureCollection"};
+var entryArray = [];
 var featureLayer = L.geoJson(null, {
   filter: function (feature, layer) {
-    addDynamicSlider(feature);
+    if (!hashMap.hasOwnProperty(feature.properties.curve_id)) {
+      hashMap[feature.properties.curve_id] = [feature];      
+      newHashMap.features.push([feature]);
+      entryArray.push(newHashMap);
+      //newHashMap = {features: [], type: "FeatureCollection"};
+      //addDynamicSlider(feature);
+    } else {
+      hashMap[feature.properties.curve_id] = hashMap[feature.properties.curve_id].concat(feature);
+      newHashMap.features.pop();
+      newHashMap.features.push(hashMap[feature.properties.curve_id]);
+      entryArray.push(newHashMap);
+      //newHashMap = {features: [], type: "FeatureCollection"};
+      //const index = newHashMap.features.findIndex()
+     // console.log(index);
+      //newHashMap.features[index] = hashMap[feature.properties.curve_id];
+    }
     return feature.geometry.coordinates[0] !== 0 && feature.geometry.coordinates[1] !== 0;
   },
   pointToLayer: function (feature, feature_latlng) {
@@ -461,6 +482,23 @@ var featureLayer = L.geoJson(null, {
   }
 });
 
+console.log(hashMap);
+console.log("------------------");
+console.log(newHashMap);
+console.log("########################################");
+newHashMap.features.forEach((entry) => {
+  console.log("*******************");
+  var thisEntry = {features: [entry], type: "FeatureCollection"};
+  addDynamicSlider(entry[0], thisEntry);
+});
+setTimeout(function() {
+  console.log(entryArray[0]);
+  newHashMap.features.forEach((entry) => {
+    console.log("*******************");
+    var thisEntry = {features: [entry], type: "FeatureCollection"};
+    addDynamicSlider(entry[0], thisEntry);
+  });
+}, 1000);
 ////////////////////////////////////////
 // Fetch the GeoJSON file
 ////////////////////////////////////////
@@ -559,11 +597,15 @@ var slider = L.control.slider(function(value) {
         offset = value / 1000;
         featureLayer.clearLayers();
         featureLayer.addData(geojson);
+        console.log(geojson);
       }
     },
     {id:slider, width: '300px',
       orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
 slider.addTo(map);
+setTimeout(function() {
+  slider.remove(map);
+}, 5000);
 
 /*
 34.89725210952032,
@@ -617,9 +659,7 @@ L.marker([34.89820284671507, -83.60308048951917], {icon: centerIcon}).addTo(map)
     orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
   dynamicSlider.addTo(map);
 });*/
-function addDynamicSlider(feature){
-  //console.log("___________");
-  //console.log(feature);
+function addDynamicSlider(feature, location) {
   var pointA = new L.LatLng(feature.properties.pc_lat, feature.properties.pc_lon);
   var pointB = new L.LatLng(feature.properties.pt_lat, feature.properties.pt_lon);
   var pointC = new L.LatLng(feature.properties.curve_center_lat, feature.properties.curve_center_lon);
@@ -648,18 +688,27 @@ function addDynamicSlider(feature){
   });
   L.marker(pointC, {icon: centerIcon}).addTo(map).on('click', function(e) {
     // Dynamic Slider
+    numDynamicSliders++;
     var dynamicSlider = L.control.dynamicSlider(function(value) {
       if(typeof features != "undefined")
       {
         console.log("dynamic moving features")
         offset = value / 1000;
         featureLayer.clearLayers();
-        featureLayer.addData(geojson);
+        featureLayer.addData(location.features[0]);
       }
     },
     {id:slider, width: '300px', positon: 'topleft',
       orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
     dynamicSlider.addTo(map);
+    if (numDynamicSliders > 1) {
+      numDynamicSliders--;
+      currentDynamicSliders.remove(map);
+      //featureLayer.clearLayers();
+      //featureLayer.addData(geojson);
+    }
+    currentDynamicSliders = dynamicSlider;
+
   });
 }
 ////////////////////////////////////////

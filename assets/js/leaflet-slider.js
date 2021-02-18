@@ -158,6 +158,7 @@ L.control.slider = function (f, options) {
     options: {
         size: '100px',
         position: 'topleft',
+        follow: true,
         min: 0,
         max: 250,
         step: 1,
@@ -196,6 +197,17 @@ L.control.slider = function (f, options) {
         this._initLayout();
         this.update(this.options.value+"");
         return this._container;
+    },
+    onRemove: function (map) {
+        //Delete all markers which where added via the slider and remove the slider div
+        for (i = this.options.minValue; i <= this.options.maxValue; i++) {
+            map.removeLayer(this.options.markers[i]);
+        }
+        $('#leaflet-slider').remove();
+
+        // unbind listeners to prevent memory leaks
+        $(document).off("mouseup");
+        $(".slider").off("mousedown");
     },
     _updateValue: function () {
         this.value = this.slider.value;
