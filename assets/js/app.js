@@ -334,7 +334,7 @@ function buildConfig() {
         if (filters[index]) {
           // If values array is empty, fetch all distinct values
           if (key == "values" && val.length === 0) {
-            alasql("SELECT DISTINCT(properties->" + value.value + ") AS field FROM ? ORDER BY field ASC", [geojson.features], function (results) {
+            alasql("SELECT DISTINCT(properties->" + value.value + ") AS field FROM ? ORDER BY field ASC", [featureLayer.toGeoJSON().features], function (results) {
               distinctValues = [];
               $.each(results, function (index, value) {
                 distinctValues.push(value.field);
@@ -484,12 +484,15 @@ setTimeout(function() {
 ////////////////////////////////////////
 
 $.getJSON(config.geojson, function (data) {
-  geojson = data;
-  features = $.map(geojson.features, function (feature) {
-    return feature.properties;
-  });
+  // geojson = data;
   console.log(data);
   featureLayer.addData(data);
+
+  // features = $.map(data.features, function (feature) {
+  //   return feature.properties;
+  // });
+  // console.log(features);
+  console.log(featureLayer.toGeoJSON().features)
   buildConfig();
   $("#loading-mask").hide();
 });
@@ -571,18 +574,18 @@ $(".info-control").hide();
 var offset = 0;
 
 var slider = L.control.slider(function(value) {
-      if(typeof features != "undefined")
-      {
-        console.log("moving features")
-        offset = value / 1000;
-        featureLayer.clearLayers();
-        featureLayer.addData(geojson);
-        console.log(geojson);
-      }
-    },
-    {id:slider, width: '300px',
-      orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
-slider.addTo(map);
+  offset = value/1000;
+    // if(typeof features != "undefined")
+    // {
+    //   console.log("moving features")
+    //   offset = value / 1000;
+    //   featureLayer.clearLayers();
+    //   featureLayer.addData(geojson);
+    // }
+  },
+  {id:slider, width: '300px', orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
+  
+  slider.addTo(map);
 
 /*
 34.89725210952032,
@@ -594,48 +597,9 @@ slider.addTo(map);
         "pt_;at": 34.89659459896904,
         "pt_lon": -83.60673085002595,
 */
-/*
-var pointA = new L.LatLng(34.89725210952032, -83.60705972992776);
-var pointB = new L.LatLng(34.89659459896904, -83.60673085002595);
-var pointC = new L.LatLng(34.89820284671507, -83.60308048951917);
-var pointList = [pointA, pointC];
-var secondPointList = [pointB, pointC];
-
-var firstpolyline = new L.Polyline(pointList, {
-    color: 'red',
-    weight: 1,
-    opacity: 0.5,
-    smoothFactor: 1
-});
-firstpolyline.addTo(map);
-
-var secondpolyline = new L.Polyline(secondPointList, {
-  color: 'red',
-  weight: 1,
-  opacity: 0.5,
-  smoothFactor: 1
-});
-secondpolyline.addTo(map);
-
-var centerIcon = L.icon({
-  iconUrl: './assets/images/42.png',
-  iconSize: [20, 20]
-});
-L.marker([34.89820284671507, -83.60308048951917], {icon: centerIcon}).addTo(map).on('click', function(e) {
-  // Dynamic Slider
-  var dynamicSlider = L.control.dynamicSlider(function(value) {
-    if(typeof features != "undefined")
-    {
-      console.log("dynamic moving features")
-      offset = value / 1000;
-      featureLayer.clearLayers();
-      featureLayer.addData(geojson);
-    }
-  },
-  {id:slider, width: '300px', positon: 'topleft',
-    orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
-  dynamicSlider.addTo(map);
-});*/
+////////////////////////////////////////
+// Curve Offset Slider
+////////////////////////////////////////
 function addDynamicSlider(feature, location) {
   var pointA = new L.LatLng(feature.properties.pc_lat, feature.properties.pc_lon);
   var pointB = new L.LatLng(feature.properties.pt_lat, feature.properties.pt_lon);
@@ -650,7 +614,6 @@ function addDynamicSlider(feature, location) {
       smoothFactor: 1
   });
   firstpolyline.addTo(map);
-
   var secondpolyline = new L.Polyline(secondPointList, {
     color: 'red',
     weight: 1,
@@ -667,13 +630,14 @@ function addDynamicSlider(feature, location) {
     // Dynamic Slider
     numDynamicSliders++;
     var dynamicSlider = L.control.dynamicSlider(function(value) {
-      if(typeof features != "undefined")
-      {
-        console.log("dynamic moving features")
-        offset = value / 1000;
-        featureLayer.clearLayers();
-        featureLayer.addData(location.features[0]);
-      }
+      offset = value/1000;
+      // if(typeof features != "undefined")
+      // {
+      //   console.log("dynamic moving features")
+      //   offset = value / 1000;
+      //   featureLayer.clearLayers();
+      //   featureLayer.addData(location.features[0]);
+      // }
     },
     {id:slider, width: '300px', positon: 'topleft',
       orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'});
@@ -724,7 +688,7 @@ function applyFilter() {
   if (sql.length > 0) {
     query += " WHERE " + sql;
   }
-  alasql(query, [geojson.features], function (features) {
+  alasql(query, [featureLayer.toGeoJSON().features], function (features) {
     featureLayer.clearLayers();
     featureLayer.addData(features);
     syncTable();
@@ -1007,9 +971,9 @@ function hidePanel(e) {
 function loadGeoJsonString(geoString) {
   var geojson = JSON.parse(geoString);
   featureLayer.clearLayers();
-  features = $.map(geojson.features, function (feature) {
-    return feature.properties;
-  });
+  // features = $.map(geojson.features, function (feature) {
+  //   return feature.properties;
+  // });
   featureLayer.addData(geojson);
   buildConfig();
   generateTotals();
