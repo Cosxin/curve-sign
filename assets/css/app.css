@@ -153,3 +153,10 @@ body {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+.curveDivIcon {
+  text-align: center;
+  /* Horizontally center the text (icon) */
+  line-height: 20px;
+  /* Vertically center the text (icon) */
+}
