@@ -262,11 +262,18 @@ var tableComponent = {
       //layer.feature.properties.current_lng = layer.getLatLng().lng;
       if (mapComponent.map.hasLayer(mapComponent.featureLayer)) {
         if (mapComponent.map.getBounds().contains(layer.getLatLng())) {
-          //TODO: Not working if mix feature types in single geojson file
           tableComponent.tableFeatures.push(layer.feature.properties);
         }
       }
     });
+
+    $("#table").bootstrapTable("load", JSON.parse(JSON.stringify(tableComponent.tableFeatures)));
+    var featureCount = $("#table").bootstrapTable("getData").length;
+    if (featureCount == 1) {
+      $("#feature-count").html($("#table").bootstrapTable("getData").length + " visible feature");
+    } else {
+      $("#feature-count").html($("#table").bootstrapTable("getData").length + " visible features");
+    }
   },
 
   buildTable : function()
@@ -430,7 +437,7 @@ var mapComponent = {
   polyMeasureControl: null,
   slider: null,
 
-  activeCurveID: 42,
+  activeCurveID: -1,
 
   mapCollection :
       {
@@ -489,6 +496,7 @@ var mapComponent = {
         return feature.properties.featureType == "sign" && feature.geometry.coordinates[0] !== 0 && feature.geometry.coordinates[1] !== 0;
       },
       pointToLayer: function (feature, feature_latlng) {
+        var latlng = L.latlng
         if (feature.properties && feature.properties["marker-color"]) {
           markerColor = feature.properties["marker-color"];
         } else {
@@ -564,17 +572,22 @@ var mapComponent = {
           smoothFactor: 1
         });
 
-
+        var curve_id = feature.properties.curve_id
         var centerMarker = L.marker(pointC, {
           icon: L.divIcon({
-            html: '<strong class="fa-stack-1x">'+feature.properties.curve_id+'</strong>',
+            html: '<strong class="fa-stack-1x">'+curve_id+'</strong>',
             iconSize: [5, 5],
             class: "curveDivIcon"
           })
         });
 
-        return L.featureGroup([firstpolyline, secondpolyline, centerMarker]);
+        var fg = L.featureGroup([firstpolyline, secondpolyline, centerMarker]);
+
+        fg.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(42, this.value)">');
+
+        return fg;
       }
+
     });
 
 
@@ -622,12 +635,6 @@ var mapComponent = {
     // Polyline Measure
     this.polyMeasureControl = L.control.polylineMeasure().addTo(this.map);
 
-    // Offset Slider
-    this.slider = L.control.slider(function(value)
-        {
-          mapComponent.adjustLateralOffset(value);
-        },
-        {id: this.slider, width: '300px', orientation: 'horizontal',min:0, max:1, step:0.01, value: 0, offset: 'O'}).addTo(this.map);
 
   },
 
@@ -693,20 +700,17 @@ var mapComponent = {
     tableComponent.syncTable();
   },
 
-  adjustLateralOffset : function(newOffset)
-  {
-    if (this.activeCurveID > 0)
-    {
-      var selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == this.activeCurveID);
+  adjustLateralOffset: function(curve_id, newOffset){
+    console.log(newOffset)
 
-      selectedLayers.forEach(function(layer)
-      {
-        var newLat = layer.feature.properties.old_lat + newOffset / 1000 * layer.feature.properties.outer_vector_lat;
-        var newLon = layer.feature.properties.old_lon + newOffset / 1000 * layer.feature.properties.outer_vector_lon;
-        layer.setLatLng([newLat, newLon]);
-        console.log([newOffset, newLat, newLon])
-      });
-    }
+    var selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
+    selectedLayers.forEach(function(layer)
+    {
+      var newLat = layer.feature.properties.old_lat + newOffset / 1000 * layer.feature.properties.outer_vector_lat;
+      var newLon = layer.feature.properties.old_lon + newOffset / 1000 * layer.feature.properties.outer_vector_lon;
+      layer.setLatLng([newLat, newLon]);
+      console.log([newOffset, newLat, newLon])
+    });
   }
 }
 
@@ -751,9 +755,6 @@ $(function init() {
 
 
 });
-
-
-
 
 
 
