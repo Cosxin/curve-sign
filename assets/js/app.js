@@ -572,11 +572,27 @@ var mapComponent = {
           smoothFactor: 1
         });
 
+        var pcMarker = L.marker(pointA, {
+          icon: L.divIcon({
+            html: '<strong class="fa-stack-1x">PC</strong>',
+            iconSize: [7, 7],
+            class: "curveDivIcon"
+          })
+        });
+
+        var ptMarker = L.marker(pointB, {
+          icon: L.divIcon({
+            html: '<strong class="fa-stack-1x">PT</strong>',
+            iconSize: [7, 7],
+            class: "curveDivIcon"
+          })
+        });
+
         var curve_id = feature.properties.curve_id
         var centerMarker = L.marker(pointC, {
           icon: L.divIcon({
             html: '<strong class="fa-stack-1x">'+curve_id+'</strong>',
-            iconSize: [5, 5],
+            iconSize: [7, 7],
             class: "curveDivIcon"
           })
         });
@@ -585,7 +601,7 @@ var mapComponent = {
 
         fg.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(' +curve_id+', this.value)">');
 
-        return fg;
+        return L.featureGroup([firstpolyline, secondpolyline, centerMarker, pcMarker, ptMarker]);
       }
 
     });

@@ -160,3 +160,9 @@ body {
   line-height: 20px;
   /* Vertically center the text (icon) */
 }
+
+/* temp fix, Display PC, PT in red*/
+strong.fa-stack-1x
+{
+  color: red;
+}
