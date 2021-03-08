@@ -597,7 +597,7 @@ var mapComponent = {
           })
         });
 
-        centerMarker.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(42, this.value)">');
+        centerMarker.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset('+curve_id+', this.value)">');
 
         return L.featureGroup([firstpolyline, secondpolyline, centerMarker, pcMarker, ptMarker]);
       }
@@ -715,8 +715,7 @@ var mapComponent = {
   },
 
   adjustLateralOffset: function(curve_id, newOffset){
-    console.log(newOffset)
-
+    newOffset /= 10;
     var selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
     selectedLayers.forEach(function(layer)
     {
