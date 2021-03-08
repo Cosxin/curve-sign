@@ -435,7 +435,7 @@ var mapComponent = {
   layerControl: null,
   scaleBarControl: null,
   polyMeasureControl: null,
-  slider: null,
+  sliderControl: null,
 
   activeCurveID: -1,
 
@@ -597,11 +597,10 @@ var mapComponent = {
           })
         });
 
-        var fg = L.featureGroup([firstpolyline, secondpolyline, centerMarker]);
+        var fg = L.featureGroup([firstpolyline, secondpolyline, centerMarker, pcMarker, ptMarker]);
+        fg.bindPopup('<input type="range" min="0" max="100" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(' +curve_id+', this.value/50)">');
 
-        fg.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(' +curve_id+', this.value)">');
-
-        return L.featureGroup([firstpolyline, secondpolyline, centerMarker, pcMarker, ptMarker]);
+        return fg;
       }
 
     });
@@ -651,7 +650,8 @@ var mapComponent = {
     // Polyline Measure
     this.polyMeasureControl = L.control.polylineMeasure().addTo(this.map);
 
-
+    // Global Slider
+    this.sliderControl = L.control.slider().addTo(this.map);
   },
 
   bindCallbacks : function ()
@@ -717,9 +717,19 @@ var mapComponent = {
   },
 
   adjustLateralOffset: function(curve_id, newOffset){
-    console.log(newOffset)
-
-    var selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
+    console.log("Hello");
+    var selectedLayers;
+    console.log(curve_id);
+    //used for global slider if -1, otherwise select a sepcific curve
+    if (curve_id == -1) {
+      console.log("before" );
+      selectedLayers = mapComponent.featureLayer.getLayers();
+      console.log("after");
+      
+    } else {
+      selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
+    }
+    console.log(selectedLayers);
     selectedLayers.forEach(function(layer)
     {
       var newLat = layer.feature.properties.old_lat + newOffset / 1000 * layer.feature.properties.outer_vector_lat;
