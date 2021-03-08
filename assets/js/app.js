@@ -583,7 +583,7 @@ var mapComponent = {
 
         var fg = L.featureGroup([firstpolyline, secondpolyline, centerMarker]);
 
-        fg.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(42, this.value)">');
+        fg.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset(' +curve_id+', this.value)">');
 
         return fg;
       }
