@@ -435,7 +435,7 @@ var mapComponent = {
   layerControl: null,
   scaleBarControl: null,
   polyMeasureControl: null,
-  slider: null,
+  sliderControl: null,
 
   activeCurveID: -1,
 
@@ -649,7 +649,8 @@ var mapComponent = {
     // Polyline Measure
     this.polyMeasureControl = L.control.polylineMeasure().addTo(this.map);
 
-
+    // Global Slider
+    this.sliderControl = L.control.slider().addTo(this.map);
   },
 
   bindCallbacks : function ()
@@ -715,8 +716,19 @@ var mapComponent = {
   },
 
   adjustLateralOffset: function(curve_id, newOffset){
-    newOffset /= 10;
-    var selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
+    console.log("Hello");
+    var selectedLayers;
+    console.log(curve_id);
+    //used for global slider if -1, otherwise select a sepcific curve
+    if (curve_id == -1) {
+      console.log("before" );
+      selectedLayers = mapComponent.featureLayer.getLayers();
+      console.log("after");
+
+    } else {
+      selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
+    }
+    console.log(selectedLayers);
     selectedLayers.forEach(function(layer)
     {
       var newLat = layer.feature.properties.old_lat + newOffset / 1000 * layer.feature.properties.outer_vector_lat;
@@ -965,7 +977,6 @@ function addDropEvents() {
   }
 }
 
-
 ////////////////////////////////////////
 // Generate Total After LoadGeoJSON is complete
 ////////////////////////////////////////
@@ -985,6 +996,9 @@ var generateTotals = function() {
     showColumns: true,
   })
 
+  var tableEntries = $.map(mapComponent.featureLayer.toGeoJSON().features, function (feature) {
+    return feature.properties;
+  });
 
   //by curve
   $(function () {
@@ -1031,7 +1045,7 @@ var generateTotals = function() {
         align: 'center'
       }
       ],
-      data: mapComponent.featureLayer.toGeoJSON(),
+      data: tableEntries,
       groupBy: true,
       groupByField: 'curve_id',
       groupByFormatter: function(value, i, data){return "Curve: " + value + " | " + "Sign Counts: " + data.length;},
@@ -1041,8 +1055,7 @@ var generateTotals = function() {
 
   //by sign
   $(function () {
-    var result = alasql("SELECT sign_code as Sign, COUNT(*) AS Quantity FROM ? GROUP BY sign_code", [mapComponent.featureLayer.toGeoJSON()]);
-    console.log(result);
+    var result = alasql("SELECT sign_code as Sign, COUNT(*) AS Quantity FROM ? GROUP BY sign_code", [tableEntries]);
     var data = $.map(result, function (sign) {
       return {
         Sign: sign.Sign,
