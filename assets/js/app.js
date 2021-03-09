@@ -978,7 +978,6 @@ function addDropEvents() {
   }
 }
 
-
 ////////////////////////////////////////
 // Generate Total After LoadGeoJSON is complete
 ////////////////////////////////////////
@@ -998,6 +997,9 @@ var generateTotals = function() {
     showColumns: true,
   })
 
+  var tableEntries = $.map(mapComponent.featureLayer.toGeoJSON().features, function (feature) {
+    return feature.properties;
+  });
 
   //by curve
   $(function () {
@@ -1044,7 +1046,7 @@ var generateTotals = function() {
         align: 'center'
       }
       ],
-      data: mapComponent.featureLayer.toGeoJSON(),
+      data: tableEntries,
       groupBy: true,
       groupByField: 'curve_id',
       groupByFormatter: function(value, i, data){return "Curve: " + value + " | " + "Sign Counts: " + data.length;},
@@ -1054,8 +1056,7 @@ var generateTotals = function() {
 
   //by sign
   $(function () {
-    var result = alasql("SELECT sign_code as Sign, COUNT(*) AS Quantity FROM ? GROUP BY sign_code", [mapComponent.featureLayer.toGeoJSON()]);
-    console.log(result);
+    var result = alasql("SELECT sign_code as Sign, COUNT(*) AS Quantity FROM ? GROUP BY sign_code", [tableEntries]);
     var data = $.map(result, function (sign) {
       return {
         Sign: sign.Sign,
