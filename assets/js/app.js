@@ -597,7 +597,7 @@ var mapComponent = {
           })
         });
 
-        centerMarker.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset('+curve_id+', this.value)">');
+        centerMarker.bindPopup('<input type="range" min="0" max="10" value="0" className="curve_slider" oninput="mapComponent.adjustLateralOffset('+curve_id+', this.value / 50)">');
 
         return L.featureGroup([firstpolyline, secondpolyline, centerMarker, pcMarker, ptMarker]);
       }
