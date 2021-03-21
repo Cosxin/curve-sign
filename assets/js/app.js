@@ -2,7 +2,7 @@ var config = {
   geojson: "./data/results.geojson",
   title: "Curve Sign Dashboard",
   layerNames: ["Signs"],
-  hoverProperty: "designation",
+  hoverProperty: "sign_code",
   sortProperty: "curve_id",
   sortOrder: "desc",
   iconWidth: 15,
@@ -72,9 +72,9 @@ var tableComponent = {
         type: "integer"
       },
       info: false
-    },/*
+    },
       {
-        value: "designation",
+        value: "sign_code",
         label: "MUTCD code",
         table: {
           visible: true,
@@ -83,11 +83,9 @@ var tableComponent = {
         filter: {
           type: "string",
           input: "checkbox",
-          vertical: true,
-          multiple: true,
           operators: ["in", "not_in", "equal", "not_equal"],
         }
-      },*/
+      },
     {
       value: "old_lat",
       label: "original latitude",
@@ -409,10 +407,13 @@ var tableComponent = {
       }
     });
 
+    /*
     $("#query-builder").queryBuilder({
       allow_empty: true,
       filters: filters
     });
+    */
+
 
     this.buildTable();
 
@@ -716,25 +717,19 @@ var mapComponent = {
   },
 
   adjustLateralOffset: function(curve_id, newOffset){
-    console.log("Hello");
+
     var selectedLayers;
-    console.log(curve_id);
     //used for global slider if -1, otherwise select a sepcific curve
     if (curve_id == -1) {
-      console.log("before" );
       selectedLayers = mapComponent.featureLayer.getLayers();
-      console.log("after");
-
     } else {
       selectedLayers = mapComponent.featureLayer.getLayers().filter(d=>d.feature.properties.curve_id == curve_id);
     }
-    console.log(selectedLayers);
     selectedLayers.forEach(function(layer)
     {
       var newLat = layer.feature.properties.old_lat + newOffset / 1000 * layer.feature.properties.outer_vector_lat;
       var newLon = layer.feature.properties.old_lon + newOffset / 1000 * layer.feature.properties.outer_vector_lon;
       layer.setLatLng([newLat, newLon]);
-      console.log([newOffset, newLat, newLon])
     });
   }
 }
@@ -1017,7 +1012,7 @@ var generateTotals = function() {
         title: 'PC Location',
         align: 'center'
       },{
-        field: 'designation',
+        field: 'sign_code',
         title: 'Sign Type',
         align: 'center'
       },{
