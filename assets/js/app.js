@@ -79,11 +79,6 @@ var tableComponent = {
         table: {
           visible: true,
           sortable: true,
-        },
-        filter: {
-          type: "string",
-          input: "checkbox",
-          operators: ["in", "not_in", "equal", "not_equal"],
         }
       },
     {
