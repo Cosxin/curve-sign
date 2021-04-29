@@ -179,7 +179,7 @@ var tableComponent = {
       value: "custom_label",
       label: "Label",
       table: {
-        visible: true,
+        visible: false,
         sortable: true,
         editable: true,
       },

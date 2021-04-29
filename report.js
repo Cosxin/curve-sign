@@ -78,22 +78,22 @@ function generateTables(data) {
         //establish header
         currID = curve[0].properties.curve_id;
         tableID = "table" + index;
-        var content = "<table id=" + tableID + " class='table'><thead><tr> <th scope='col'> Curve " + index + "</th><th scope='col'>Curve Direction</th><th scope='col'>Sign Type</th><th scope='col'>Side of Curve</th><th scope='col'>Distance to PC</th><th scope='col'>Mile Post</th><th scope='col'>Required</th></tr></thead><tbody>";
+        var content = "<table id=" + tableID + " class='table'><thead><tr> <th scope='col'> Curve " + index + "</th><th scope='col'>Sign Type</th><th scope='col'>Side of Curve</th><th scope='col'>Distance to PC</th><th scope='col'>Milepost</th></tr></thead><tbody>";
         var currLayer = createLayer();
         for (var pointIndex in curve) {
             currLayer.addData(curve[pointIndex]);
             content+= "<tr> <th scope = 'row'>" + pointIndex + "</th>";
-            content+= "<td>" + curve[pointIndex].properties.route_direction + "</td>";
+            // content+= "<td>" + curve[pointIndex].properties.route_direction + "</td>";
             content+= "<td>" + curve[pointIndex].properties.sign_code + "</td>";
             content+= "<td>" + curve[pointIndex].properties.road_side + "</td>";
-            content+= "<td>" + curve[pointIndex].properties.distance_from_pc + "</td>";
-            content+= "<td>" + curve[pointIndex].properties.mile_post + "</td>";
-            content+= "<td>" + curve[pointIndex].properties.required + "</td>";
+            content+= "<td>" + (Math.round(curve[pointIndex].properties.distance_from_pc * 100) / 100).toFixed(2) + "</td>";
+            content+= "<td>" + (Math.round(curve[pointIndex].properties.mile_post * 100) / 100).toFixed(2) + "</td>";
+            // content+= "<td>" + curve[pointIndex].properties.required + "</td>";
 
         }
         content+= "</tr></tbody></table>";
         mapID = "map" + index;
-        content+="<div id = " + mapID + " class='map-container'></div><P style='page-break-before: always'>";
+        content+="<div id = " + mapID + " class='map-container'></div><P style='page-break-before: always; page-break-after:always'>";
         $('#testTables').append(content);
         var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
@@ -200,12 +200,11 @@ $(document).ready(function(){
         for (var i of Object.keys(curves)) {
             var table = document.getElementById("table" + i);
             var map = document.getElementById("map" + i);
-            console.log("MADE IT");
             doc.autoTable({
                 startY: doc.lastAutoTable.finalY + 300,
                 html: table,
             });
-            await domtoimage.toPng(map)
+            await domtoimage.toPng(map, {"width": 100})
                 .then(function (dataURL) {
                     var img = new Image();
                     img.src = dataURL;
