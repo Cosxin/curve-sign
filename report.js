@@ -205,11 +205,11 @@ $(document).ready(function(){
                 startY: doc.lastAutoTable.finalY + 300,
                 html: table,
             });
-            await domtoimage.toPng(map)
+            await domtoimage.toJpeg(map)
                 .then(function (dataURL) {
                     var img = new Image();
                     img.src = dataURL;
-                    doc.addImage(img, 'PNG', 14, doc.lastAutoTable.finalY + 15, width - 14, 100)
+                    doc.addImage(img, 'JPEG', 14, doc.lastAutoTable.finalY + 15, width - 14, 100)
                 })
                 .catch(function (error) {
                     console.error("error creating " + map, error);

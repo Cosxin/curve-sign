@@ -678,8 +678,8 @@ var mapComponent = {
   identifyFeature : function (id) {
     var featureProperties = this.featureLayer.getLayer(id).feature.properties;
     var content = "<table class='table table-striped table-bordered table-condensed'>";
-    $("#resetMarker").off("click").on("click", function () { this.resetMarker(id); });
-    $("#deleteMarker").off("click").on("click", function () { this.deleteMarker(id); });
+    $("#resetMarker").off("click").on("click", function () { mapComponent.resetMarker(id); });
+    $("#deleteMarker").off("click").on("click", function () { mapComponent.deleteMarker(id); });
     $.each(featureProperties, function (key, value) {
       if (!value) {
         value = "";
@@ -770,7 +770,6 @@ $(function init() {
 
 
 });
-
 
 
 ////////////////////////////////////////
